@@ -1,0 +1,28 @@
+{
+    "page": [
+        [
+            "about",
+            "About Teachable Machine"
+        ],
+        [
+            "faq",
+            "FAQ"
+        ],
+        [
+            "feedback",
+            "Send Feedback"
+        ],
+        [
+            "select_project",
+            "Select Project"
+        ],
+        [
+            "train",
+            "Training Model"
+        ],
+        [
+            "test",
+            "Testing Model"
+        ]
+    ]
+}
