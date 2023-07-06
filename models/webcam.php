@@ -5,18 +5,18 @@
                 <p>Webcam</p>
             </div>
             <div class="col-2 mt-1">
-                <a href="#" class="text-dark" onclick="back_webcam()">
+                <a href="#" class="text-dark" onclick="back_webcam(<?= $_GET['number'] ?>)">
                     <i class="bi-x float-end" style="font-size: 35px; margin-top: -10px; margin-right: -5px;"></i>
                 </a>
             </div>
         </div>
-        <select name="" id="webcam_select" class="form-select" onchange="change_webcam()"></select>
-        <video class="rounded-2 mt-2 w-100" id="video" controls></video>
-        <button class="btn btn-sm btn-primary col-12 mt-1 mb-1" onmousedown="start_capture()" onmouseup="stop_capture()" onmouseleave="stop_capture()">Hold to Record &nbsp;<i class="bi-camera-video"></i></button>
+        <select name="" id="webcam_select_<?= $_GET['number'] ?>" class="form-select" onchange="change_webcam(<?= $_GET['number'] ?>)"></select>
+        <video class="rounded-2 mt-2 w-100" id="video_<?= $_GET['number'] ?>" controls></video>
+        <button class="btn btn-sm btn-primary col-12 mt-1 mb-1" onmousedown="start_capture(<?= $_GET['number'] ?>)" onmouseup="stop_capture(<?= $_GET['number'] ?>)" onmouseleave="stop_capture(<?= $_GET['number'] ?>)">Hold to Record &nbsp;<i class="bi-camera-video"></i></button>
     </div>
     <div class="col-5 mt-1">
-        <p id="image_samples"></p>
-        <div class="row img-samples p-2" id="imgSamples"></div>
+        <p id="image_samples_<?= $_GET['number'] ?>"></p>
+        <div class="row img-samples p-2" id="imgSamples_<?= $_GET['number'] ?>"></div>
     </div>
 </div>
 
@@ -40,20 +40,28 @@
     }
 
     if (localStorage.length === 0) {
-        document.getElementById('imgSamples').innerHTML = "<div class='alert alert-primary'>No sample were made.</div>";
+        document.getElementById('imgSamples_<?= $_GET['number'] ?>').innerHTML = "<div class='alert alert-primary'>No sample were made.</div>";
     }
 
-    function lengthImageLocalData() {
-        const image_samples = document.getElementById("image_samples");
+    function lengthImageLocalData(number) {
+        const image_samples = document.getElementById('image_samples_' + number);
 
-        if (localStorage.length === 0) {
+        const imageKeys = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key.startsWith(number + "-")) {
+                imageKeys.push(key);
+            }
+        }
+
+        if (imageKeys.length === 0) {
             image_samples.innerText = "Add Image Samples:";
         } else {
-            image_samples.innerText = localStorage.length + " Image Samples";
+            image_samples.innerText = imageKeys.length + " Image Samples";
         }
     }
 
-    function saveImage(imageId, imageURL) {
+    function saveImage(number, imageId, imageURL) {
         const image = document.createElement('img');
         image.src = imageURL;
 
@@ -87,26 +95,28 @@
 
             const croppedImageURL = canvas.toDataURL('image/jpeg', 0.5); // quality
 
-            localStorage.setItem(imageId.toString(), croppedImageURL);
+            localStorage.setItem(number + "-" + imageId.toString(), croppedImageURL);
 
-            displayImage(imageId, croppedImageURL);
+            displayImage(number, imageId, croppedImageURL);
         };
     }
 
-    function displayImage(imageId, imageDataURL) {
-        lengthImageLocalData();
+    function displayImage(number, imageId, imageDataURL) {
+        lengthImageLocalData(number);
 
-        const imgSamplesDiv = document.getElementById('imgSamples');
+        const imgSamplesDiv = document.getElementById('imgSamples_' + number);
         imgSamplesDiv.innerHTML = "";
 
         const imageKeys = [];
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
-            imageKeys.push(key);
+            if (key.startsWith(number + "-")) {
+                imageKeys.push(key);
+            }
         }
 
         imageKeys.sort(function(a, b) {
-            return b - a;
+            return parseInt(b.split("-")[1]) - parseInt(a.split("-")[1]);
         });
 
         imageKeys.forEach(function(key) {
@@ -153,21 +163,23 @@
         localStorage.clear();
     }
 
-    function start_capture() {
-        const video = document.getElementById('video');
+    function start_capture(number) {
+        const video = document.getElementById('video_' + number);
         if (video.readyState === 4) {
-            captureInterval = setInterval(capture_image, 100);
+            captureInterval = setInterval(() => {
+                capture_image(number);
+            }, 100);
             setCookie('captureInterval', captureInterval, 1);
         }
     }
 
-    function stop_capture() {
+    function stop_capture(number) {
         const captureInterval = getCookie('captureInterval');
         clearInterval(captureInterval);
         setCookie('captureInterval', clearInterval(captureInterval), 1);
     }
 
-    function capture_image() {
+    function capture_image(number) {
         const quota = (1024 * 1024) * 1.5; // quota
         const currentUsage = JSON.stringify(localStorage).length;
 
@@ -177,7 +189,7 @@
             return;
         }
 
-        const video = document.getElementById('video');
+        const video = document.getElementById('video_' + number);
         const canvas = document.createElement('canvas');
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
@@ -188,6 +200,6 @@
         const imageId = new Date().getTime();
         const imageURL = canvas.toDataURL();
 
-        saveImage(imageId, imageURL);
+        saveImage(number, imageId, imageURL);
     }
 </script>

@@ -3,7 +3,7 @@
     <h1 class="fw-bold">Select Project</h1>
     <div class="row mt-3 flex-nowrap">
         <div class="col-4 mb-3" style="width: 20rem;">
-            <a href="train" class="text-decoration-none">
+            <a href="#" class="text-decoration-none" onclick="train()">
                 <div class="card transform-shadow">
                     <img src="assets/img/other/teaching.webp" class="card-img-top object-fit-contain" alt="From File Project" style="height: 13rem;">
                     <div class="card-body" style="height: 8rem;">
@@ -26,3 +26,17 @@
         </div>
     </div>
 </main>
+
+<script>
+    function setCookie(name, value, daysToExpire) {
+        const date = new Date();
+        date.setTime(date.getTime() + (daysToExpire * 24 * 60 * 60 * 1000));
+        const expires = 'expires=' + date.toUTCString();
+        document.cookie = name + '=' + value + '; ' + expires + '; path=/';
+    }
+
+    function train() {
+        setCookie('newClass', 1, 1);
+        window.location.href = "train";
+    }
+</script>

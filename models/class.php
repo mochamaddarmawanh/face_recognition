@@ -2,7 +2,7 @@
     <div class="card-header bg-white">
         <div class="row">
             <div class="col-11">
-                <h5>Class 1 &nbsp;<a href="#" class="text-decoration-none text-secondary"><i class="bi-pencil" style="font-size: 20px;"></i></a></h5>
+                <h5>Class <?= $_GET['number'] ?> &nbsp;<a href="#" class="text-decoration-none text-secondary"><i class="bi-pencil" style="font-size: 20px;"></i></a></h5>
             </div>
             <div class="col-1">
                 <div class="dropdown">
@@ -16,25 +16,27 @@
             </div>
         </div>
     </div>
-    <div class="card-body" id="content">
+    <div class="card-body" id="content_<?= $_GET['number'] ?>">
         <p>Add Image Samples:</p>
-        <button class="btn btn-sm btn-primary" onclick="webcam()">
+        <button class="btn btn-sm btn-primary" onclick="webcam(<?= $_GET['number'] ?>)">
             <i class="bi-camera-video"></i>
             <br>
             Webcam
         </button>
-        <button class="btn btn-sm btn-primary" onclick="file()">
+        <button class="btn btn-sm btn-primary" onclick="file(<?= $_GET['number'] ?>)">
             <i class="bi-upload"></i>
             <br>
             Upload
         </button>
-        <button class="btn btn-sm btn-primary" onclick="preview()">
+        <button class="btn btn-sm btn-primary" onclick="preview(<?= $_GET['number'] ?>)">
             <i class="bi-image"></i>
             <br>
-            <span id="image_samples_button"></span>
+            <span id="image_samples_button_<?= $_GET['number'] ?>"></span>
         </button>
     </div>
 </div>
+
+<!-- <button onclick="read()">read</button> -->
 
 <script>
     window.addEventListener('beforeunload', function(event) {
@@ -47,35 +49,47 @@
 
     window.addEventListener('unload', function() {
         localStorage.clear();
+        setCookie('newClass', 1, 1);
     });
 
-    if (localStorage.length === 0) {
-        document.getElementById('image_samples_button').innerText = "0 Sample";
+    if (localStorage.length === 0 || Object.keys(localStorage).filter(key => key.startsWith(<?= $_GET['number'] ?> + "-")).length === 0) {
+        document.getElementById('image_samples_button_<?= $_GET['number'] ?>').innerText = "0 Sample";
     } else {
-        document.getElementById('image_samples_button').innerText = localStorage.length + " Samples";
+        const sampleCount = Object.keys(localStorage).filter(key => key.startsWith(<?= $_GET['number'] ?> + "-")).length;
+        document.getElementById('image_samples_button_<?= $_GET['number'] ?>').innerText = sampleCount + " Samples";
     }
 
-    function lengthImageLocalData() {
-        const image_samples = document.getElementById('image_samples');
-
-        if (localStorage.length === 0) {
-            image_samples.innerText = "Add Image Samples:";
-        } else {
-            image_samples.innerText = localStorage.length + " Image Samples";
-        }
-    }
-
-    function displayImageLocalData() {
-        const imgSamplesDiv = document.getElementById('imgSamples');
-
+    function keyImageLocalData(number) {
         const imageKeys = [];
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
-            imageKeys.push(key);
+            if (key.startsWith(number + "-")) {
+                imageKeys.push(key);
+            }
         }
+        imageKeys.sort(function(a, b) {
+            return parseInt(b.split("-")[1]) - parseInt(a.split("-")[1]);
+        });
+        return imageKeys;
+    }
+
+    function lengthImageLocalData(number) {
+        const imageKeys = keyImageLocalData(number);
+        const image_samples = document.getElementById('image_samples_' + number);
+
+        if (imageKeys.length === 0) {
+            image_samples.innerText = "Add Image Samples:";
+        } else {
+            image_samples.innerText = imageKeys.length + " Image Samples";
+        }
+    }
+
+    function displayImageLocalData(number) {
+        const imageKeys = keyImageLocalData(number);
+        const imgSamplesDiv = document.getElementById('imgSamples_' + number);
 
         imageKeys.sort(function(a, b) {
-            return b - a;
+            return parseInt(b.split("-")[1]) - parseInt(a.split("-")[1]);
         });
 
         imageKeys.forEach(function(key) {
@@ -133,9 +147,9 @@
         });
     }
 
-    function webcam() {
+    function webcam(number) {
         new Promise(function(resolve, reject) {
-            $('#content').load('models/webcam.php', function() {
+            $('#content_' + number).load('models/webcam.php?number=' + number, function() {
                 resolve();
             }, function(error) {
                 reject(error);
@@ -145,14 +159,14 @@
                 video: true
             });
         }).then(function(mediaStream) {
-            lengthImageLocalData();
-            displayImageLocalData();
+            lengthImageLocalData(number);
+            displayImageLocalData(number);
 
-            const video = document.getElementById('video');
+            const video = document.getElementById('video_' + number);
             video.srcObject = mediaStream;
 
             getAvailableWebcams().then(function(webcams) {
-                const webcam_select = document.getElementById('webcam_select');
+                const webcam_select = document.getElementById('webcam_select_' + number);
                 webcam_select.innerHTML = "<option value='' selected disabled>Switch Webcam</option>";
                 webcams.forEach(function(webcam) {
                     const option = document.createElement('option');
@@ -164,64 +178,66 @@
                 console.error('Error:', error);
             });
         }).catch(function(error) {
-            $('#content').load('models/method.php');
+            $('#content_' + number).load('models/method.php?number=' + number);
             alert('There was an error opening your webcam. Make sure permissions are enabled or switch to image uploading.');
+            console.log(error)
         });
     }
 
-    function change_webcam() {
-        const selectedWebcam = document.getElementById('webcam_select').value;
+    function change_webcam(number) {
+        const selectedWebcam = document.getElementById('webcam_select_' + number).value;
+        console.log(selectedWebcam)
 
         navigator.mediaDevices.getUserMedia({
             video: {
                 deviceId: selectedWebcam
             }
         }).then(function(stream) {
-            const video = document.getElementById('video');
+            const video = document.getElementById('video_' + number);
             video.srcObject = stream;
         }).catch(function(error) {
             alert('Error accessing webcam:', error);
         });
     }
 
-    function file() {
+    function file(number) {
         new Promise(function(resolve, reject) {
-            $('#content').load('models/file.php', function() {
+            $('#content_' + number).load('models/file.php?number=' + number, function() {
                 resolve();
             }, function(error) {
                 reject(error);
             });
         }).then(function(mediaStream) {
-            lengthImageLocalData();
-            displayImageLocalData();
+            lengthImageLocalData(number);
+            displayImageLocalData(number);
         }).catch(function(error) {
-            $('#content').load('models/method.php');
+            $('#content_' + number).load('models/method.php?number=' + number);
             alert(error);
         });
     }
 
-    function preview() {
+    function preview(number) {
         new Promise(function(resolve, reject) {
-            $('#content').load('models/preview.php', function() {
+            $('#content_' + number).load('models/preview.php?number=' + number, function() {
                 resolve();
             }, function(error) {
                 reject(error);
             });
         }).then(function(mediaStream) {
-            lengthImageLocalData();
-            displayImageLocalData();
+            lengthImageLocalData(number);
+            displayImageLocalData(number);
         }).catch(function(error) {
-            $('#content').load('models/method.php');
+            $('#content_' + number).load('models/method.php?number=' + number);
             alert(error);
         });
     }
 
-    function back() {
-        $('#content').load('models/method.php');
+    function back(number) {
+        $('#content_' + number).load('models/method.php?number=' + number);
     }
 
-    function back_webcam() {
-        const mediaStream = document.getElementById('video').srcObject;
+    function back_webcam(number) {
+        const mediaStream = document.getElementById('video_' + number).srcObject;
 
         if (mediaStream) {
             mediaStream.getTracks().forEach(function(track) {
@@ -229,12 +245,14 @@
             });
         }
 
-        $('#content').load('models/method.php');
+        $('#content_' + number).load('models/method.php?number=' + number);
     }
 
-    // for (var i = 0; i < localStorage.length; i++) {
-    //     var key = localStorage.key(i);
-    //     var value = localStorage.getItem(key);
-    //     console.log("Key: " + key + ", Value: " + value);
+    // function read() {
+    //     for (var i = 0; i < localStorage.length; i++) {
+    //         var key = localStorage.key(i);
+    //         var value = localStorage.getItem(key);
+    //         console.log("Key: " + key + ", Value: " + value);
+    //     }
     // }
 </script>

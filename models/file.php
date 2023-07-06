@@ -3,24 +3,26 @@
         <p>File</p>
     </div>
     <div class="col-2 mt-1">
-        <a href="#" class="text-dark" onclick="back()">
+        <a href="#" class="text-dark" onclick="back(<?= $_GET['number'] ?>)">
             <i class="bi-x float-end" style="font-size: 35px; margin-top: -10px; margin-right: -5px;"></i>
         </a>
     </div>
 </div>
-<input type="file" name="image" id="image" class="form-control">
-<p style="margin: 20px 0px 5px;" id="image_samples"></p>
-<div class="row img-samples ps-2 me-0" id="imgSamples"></div>
+<input type="file" name="image" id="image_<?= $_GET['number'] ?>" class="form-control">
+<p style="margin: 20px 0px 5px;" id="image_samples_<?= $_GET['number'] ?>"></p>
+<div class="row img-samples ps-2 me-0" id="imgSamples_<?= $_GET['number'] ?>"></div>
 
 <script>
-    document.getElementById('image').addEventListener('change', upload);
+    document.getElementById('image_' + <?= $_GET['number'] ?>).addEventListener('change', function() {
+        upload(<?= $_GET['number'] ?>);
+    });
 
     if (localStorage.length === 0) {
-        document.getElementById('imgSamples').innerHTML = "<div class='alert alert-primary mt-1'>No sample were made.</div>";
+        document.getElementById('imgSamples_' + <?= $_GET['number'] ?>).innerHTML = "<div class='alert alert-primary mt-1'>No sample were made.</div>";
     }
 
-    function lengthImageLocalData() {
-        const image_samples = document.getElementById("image_samples");
+    function lengthImageLocalData(number) {
+        const image_samples = document.getElementById('image_samples_' + number);
 
         if (localStorage.length === 0) {
             image_samples.innerText = "Add Image Samples:";
@@ -29,11 +31,11 @@
         }
     }
 
-    function upload() {
+    function upload(number) {
         const quota = (1024 * 1024) * 1.5; // quota
         const currentUsage = JSON.stringify(localStorage).length;
 
-        const image = document.getElementById("image").files[0];
+        const image = document.getElementById('image_' + number).files[0];
         const imageId = new Date().getTime();
         const reader = new FileReader();
         const allowedFormats = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
@@ -59,13 +61,13 @@
         reader.onload = function(e) {
             const imageDataURL = e.target.result;
 
-            saveImage(imageId, imageDataURL);
+            saveImage(number, imageId, imageDataURL);
         };
 
         reader.readAsDataURL(image);
     }
 
-    function saveImage(imageId, imageURL) {
+    function saveImage(number, imageId, imageURL) {
         const image = document.createElement('img');
         image.src = imageURL;
 
@@ -99,26 +101,28 @@
 
             const croppedImageURL = canvas.toDataURL('image/jpeg', 0.5); // quality
 
-            localStorage.setItem(imageId.toString(), croppedImageURL);
+            localStorage.setItem(number + "-" + imageId.toString(), croppedImageURL);
 
-            displayImage(imageId, croppedImageURL);
+            displayImage(number, imageId, croppedImageURL);
         };
     }
 
-    function displayImage(imageId, imageDataURL) {
-        lengthImageLocalData();
+    function displayImage(number, imageId, imageDataURL) {
+        lengthImageLocalData(number);
 
-        const imgSamplesDiv = document.getElementById('imgSamples');
+        const imgSamplesDiv = document.getElementById('imgSamples_' + number);
         imgSamplesDiv.innerHTML = "";
 
         const imageKeys = [];
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
-            imageKeys.push(key);
+            if (key.startsWith(number + "-")) {
+                imageKeys.push(key);
+            }
         }
 
         imageKeys.sort(function(a, b) {
-            return b - a;
+            return parseInt(b.split("-")[1]) - parseInt(a.split("-")[1]);
         });
 
         imageKeys.forEach(function(key) {

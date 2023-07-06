@@ -52,15 +52,36 @@
     </div>
 
     <script>
-        $('#class').load('models/class.php');
+        $('#class').load('models/class.php?number=1');
+
+        function setCookie(name, value, daysToExpire) {
+            const date = new Date();
+            date.setTime(date.getTime() + (daysToExpire * 24 * 60 * 60 * 1000));
+            const expires = 'expires=' + date.toUTCString();
+            document.cookie = name + '=' + value + '; ' + expires + '; path=/';
+        }
+
+        function getCookie(name) {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith(name + '=')) {
+                    return cookie.substring(name.length + 1);
+                }
+            }
+            return null;
+        }
 
         function add_new_class() {
+            let newClass = parseInt(getCookie('newClass')) + 1;
+
             $.ajax({
-                url: 'models/class.php',
+                url: 'models/class.php?number=' + newClass,
                 type: 'POST',
                 dataType: 'html',
                 success: function(response) {
                     $('#class').append(response);
+                    setCookie('newClass', newClass, 1);
                 },
                 error: function(xhr, status, error) {
                     console.error('Error:', error);
@@ -68,4 +89,3 @@
             });
         }
     </script>
-
