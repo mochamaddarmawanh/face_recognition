@@ -31,12 +31,93 @@
         <button class="btn btn-sm btn-primary" onclick="preview()">
             <i class="bi-image"></i>
             <br>
-            20 Samples
+            <span id="image_samples_button"></span>
         </button>
     </div>
 </div>
 
 <script>
+    window.addEventListener('beforeunload', function(event) {
+        event.preventDefault();
+        event.returnValue = '';
+        var confirmationMessage = 'Changes you made may not be saved.';
+        event.returnValue = confirmationMessage; // Untuk browser yang mendukung returnValue
+        return confirmationMessage; // Untuk browser yang tidak mendukung returnValue
+    });
+
+    window.addEventListener('unload', function() {
+        localStorage.clear();
+    });
+
+    if (localStorage.length === 0) {
+        document.getElementById('image_samples_button').innerText = "0 Sample";
+    } else {
+        document.getElementById('image_samples_button').innerText = localStorage.length + " Samples";
+    }
+
+    function lengthImageLocalData() {
+        const image_samples = document.getElementById('image_samples');
+
+        if (localStorage.length === 0) {
+            image_samples.innerText = "Add Image Samples:";
+        } else {
+            image_samples.innerText = localStorage.length + " Image Samples";
+        }
+    }
+
+    function displayImageLocalData() {
+        const imgSamplesDiv = document.getElementById('imgSamples');
+
+        const imageKeys = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            imageKeys.push(key);
+        }
+
+        imageKeys.sort(function(a, b) {
+            return b - a;
+        });
+
+        imageKeys.forEach(function(key) {
+            const value = localStorage.getItem(key);
+
+            const newImageDiv = document.createElement('div');
+            newImageDiv.className = 'col-4 col-lg-3 p-1';
+
+            const imgTrashDiv = document.createElement('div');
+            imgTrashDiv.className = 'img-trash';
+
+            const aToggle = document.createElement('a');
+            aToggle.href = '#';
+            aToggle.setAttribute('data-bs-toggle', 'modal');
+            aToggle.setAttribute('data-bs-target', '#imageSample');
+
+            const newImage = document.createElement('img');
+            newImage.src = value;
+            newImage.alt = 'Captured Image';
+            newImage.className = 'img-fluid rounded-2 border object-fit-contain';
+
+            newImage.setAttribute('id', key);
+
+            const aTrash = document.createElement('a');
+            aTrash.href = '#';
+
+            const iTrash = document.createElement('i');
+            iTrash.className = 'bi bi-trash text-light';
+
+            aTrash.appendChild(iTrash);
+
+            aToggle.appendChild(newImage);
+
+            imgTrashDiv.appendChild(aToggle);
+            imgTrashDiv.appendChild(aTrash);
+
+            newImageDiv.appendChild(imgTrashDiv);
+
+            imgSamplesDiv.appendChild(newImageDiv);
+        });
+    }
+
     function getAvailableWebcams() {
         return new Promise(function(resolve, reject) {
             navigator.mediaDevices.enumerateDevices()
@@ -64,6 +145,9 @@
                 video: true
             });
         }).then(function(mediaStream) {
+            lengthImageLocalData();
+            displayImageLocalData();
+
             const video = document.getElementById('video');
             video.srcObject = mediaStream;
 
@@ -101,11 +185,35 @@
     }
 
     function file() {
-        $('#content').load('models/file.php');
+        new Promise(function(resolve, reject) {
+            $('#content').load('models/file.php', function() {
+                resolve();
+            }, function(error) {
+                reject(error);
+            });
+        }).then(function(mediaStream) {
+            lengthImageLocalData();
+            displayImageLocalData();
+        }).catch(function(error) {
+            $('#content').load('models/method.php');
+            alert(error);
+        });
     }
 
     function preview() {
-        $('#content').load('models/preview.php');
+        new Promise(function(resolve, reject) {
+            $('#content').load('models/preview.php', function() {
+                resolve();
+            }, function(error) {
+                reject(error);
+            });
+        }).then(function(mediaStream) {
+            lengthImageLocalData();
+            displayImageLocalData();
+        }).catch(function(error) {
+            $('#content').load('models/method.php');
+            alert(error);
+        });
     }
 
     function back() {
@@ -123,4 +231,10 @@
 
         $('#content').load('models/method.php');
     }
+
+    // for (var i = 0; i < localStorage.length; i++) {
+    //     var key = localStorage.key(i);
+    //     var value = localStorage.getItem(key);
+    //     console.log("Key: " + key + ", Value: " + value);
+    // }
 </script>

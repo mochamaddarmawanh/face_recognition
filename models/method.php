@@ -12,5 +12,13 @@
 <button class="btn btn-sm btn-primary" onclick="preview()">
     <i class="bi-image"></i>
     <br>
-    20 Samples
+    <span id="image_samples_button"></span>
 </button>
+
+<script>
+    if (localStorage.length === 0) {
+        document.getElementById("image_samples_button").innerText = "0 Sample";
+    } else {
+        document.getElementById("image_samples_button").innerText = localStorage.length + " Samples";
+    }
+</script>

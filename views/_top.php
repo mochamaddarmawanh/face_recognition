@@ -8,6 +8,8 @@
     <link href="assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="assets/icon/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="assets/css/style.css" rel="stylesheet">
+
+    <script src="assets/js/jquery-3.7.0.min.js"></script>
 </head>
 
 <body>
@@ -27,7 +29,7 @@
                 <div class="offcanvas-body">
                     <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                         <li class="nav-item">
-                            <a class="nav-link <?= $title === "Select Project" ? "active" : ""; ?>" aria-current="page" href="select_project"><i class="bi-plus"></i>&nbsp; Select Project</a>
+                            <a class="nav-link <?= $title === "Select Project" ? "active" : ""; ?>" aria-current="page" href="project"><i class="bi-plus"></i>&nbsp; Select Project</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link <?= $title === "About Teachable Machine" ? "active" : ""; ?>" aria-current="page" href="about"><i class="bi-house"></i>&nbsp; About Teachable Machine</a>
@@ -43,3 +45,4 @@
             </div>
         </div>
     </nav>
+

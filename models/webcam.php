@@ -12,372 +12,182 @@
         </div>
         <select name="" id="webcam_select" class="form-select" onchange="change_webcam()"></select>
         <video class="rounded-2 mt-2 w-100" id="video" controls></video>
-        <button class="btn btn-sm btn-primary col-12 mt-1 mb-1 d-none d-lg-inline">Hold to Record &nbsp;<i class="bi-camera-video"></i></button>
-        <button class="btn btn-sm btn-primary col-12 mt-1 mb-1 d-lg-none">Hold &nbsp;<i class="bi-camera-video"></i></button>
+        <button class="btn btn-sm btn-primary col-12 mt-1 mb-1" onmousedown="start_capture()" onmouseup="stop_capture()" onmouseleave="stop_capture()">Hold to Record &nbsp;<i class="bi-camera-video"></i></button>
     </div>
     <div class="col-5 mt-1">
-        <p>12 Image Samples</p>
-        <div class="row img-samples">
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-4 col-lg-3 p-1">
-                <div class="img-trash">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageSample">
-                        <img src="assets/img/other/teaching.webp" alt="" class="img-fluid rounded-2 border object-fit-contain">
-                    </a>
-                    <a href="#">
-                        <i class="bi bi-trash text-light"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
+        <p id="image_samples"></p>
+        <div class="row img-samples p-2" id="imgSamples"></div>
     </div>
 </div>
+
+<script>
+    function setCookie(name, value, daysToExpire) {
+        const date = new Date();
+        date.setTime(date.getTime() + (daysToExpire * 24 * 60 * 60 * 1000));
+        const expires = 'expires=' + date.toUTCString();
+        document.cookie = name + '=' + value + '; ' + expires + '; path=/';
+    }
+
+    function getCookie(name) {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.startsWith(name + '=')) {
+                return cookie.substring(name.length + 1);
+            }
+        }
+        return null;
+    }
+
+    if (localStorage.length === 0) {
+        document.getElementById('imgSamples').innerHTML = "<div class='alert alert-primary'>No sample were made.</div>";
+    }
+
+    function lengthImageLocalData() {
+        const image_samples = document.getElementById("image_samples");
+
+        if (localStorage.length === 0) {
+            image_samples.innerText = "Add Image Samples:";
+        } else {
+            image_samples.innerText = localStorage.length + " Image Samples";
+        }
+    }
+
+    function saveImage(imageId, imageURL) {
+        const image = document.createElement('img');
+        image.src = imageURL;
+
+        image.onload = function() {
+            const canvas = document.createElement('canvas');
+            const maxWidth = 250;
+            const maxHeight = 250;
+
+            let width = image.width;
+            let height = image.height;
+            let offsetX = 0;
+            let offsetY = 0;
+
+            if (width > maxWidth || height > maxHeight) {
+                if (width / height > maxWidth / maxHeight) {
+                    width = Math.floor(maxHeight * width / height);
+                    height = maxHeight;
+                    offsetX = Math.floor((width - maxWidth) / 2);
+                } else {
+                    height = Math.floor(maxWidth * height / width);
+                    width = maxWidth;
+                    offsetY = Math.floor((height - maxHeight) / 2);
+                }
+            }
+
+            canvas.width = maxWidth;
+            canvas.height = maxHeight;
+
+            const context = canvas.getContext('2d');
+            context.drawImage(image, -offsetX, -offsetY, width, height);
+
+            const croppedImageURL = canvas.toDataURL('image/jpeg', 0.5); // quality
+
+            localStorage.setItem(imageId.toString(), croppedImageURL);
+
+            displayImage(imageId, croppedImageURL);
+        };
+    }
+
+    function displayImage(imageId, imageDataURL) {
+        lengthImageLocalData();
+
+        const imgSamplesDiv = document.getElementById('imgSamples');
+        imgSamplesDiv.innerHTML = "";
+
+        const imageKeys = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            imageKeys.push(key);
+        }
+
+        imageKeys.sort(function(a, b) {
+            return b - a;
+        });
+
+        imageKeys.forEach(function(key) {
+            const value = localStorage.getItem(key);
+
+            const newImageDiv = document.createElement('div');
+            newImageDiv.className = 'col-4 col-lg-3 p-1';
+
+            const imgTrashDiv = document.createElement('div');
+            imgTrashDiv.className = 'img-trash';
+
+            const aToggle = document.createElement('a');
+            aToggle.href = '#';
+            aToggle.setAttribute('data-bs-toggle', 'modal');
+            aToggle.setAttribute('data-bs-target', '#imageSample');
+
+            const newImage = document.createElement('img');
+            newImage.src = value;
+            newImage.alt = 'Captured Image';
+            newImage.className = 'img-fluid rounded-2 border object-fit-contain';
+
+            newImage.setAttribute('id', key);
+
+            const aTrash = document.createElement('a');
+            aTrash.href = '#';
+
+            const iTrash = document.createElement('i');
+            iTrash.className = 'bi bi-trash text-light';
+
+            aTrash.appendChild(iTrash);
+
+            aToggle.appendChild(newImage);
+
+            imgTrashDiv.appendChild(aToggle);
+            imgTrashDiv.appendChild(aTrash);
+
+            newImageDiv.appendChild(imgTrashDiv);
+
+            imgSamplesDiv.appendChild(newImageDiv);
+        });
+    }
+
+    function clearAllLocalData() {
+        localStorage.clear();
+    }
+
+    function start_capture() {
+        const video = document.getElementById('video');
+        if (video.readyState === 4) {
+            captureInterval = setInterval(capture_image, 100);
+            setCookie('captureInterval', captureInterval, 1);
+        }
+    }
+
+    function stop_capture() {
+        const captureInterval = getCookie('captureInterval');
+        clearInterval(captureInterval);
+        setCookie('captureInterval', clearInterval(captureInterval), 1);
+    }
+
+    function capture_image() {
+        const quota = (1024 * 1024) * 1.5; // quota
+        const currentUsage = JSON.stringify(localStorage).length;
+
+        if (currentUsage >= quota) {
+            stop_capture();
+            alert('Local storage quota telah melebihi batas.');
+            return;
+        }
+
+        const video = document.getElementById('video');
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const imageId = new Date().getTime();
+        const imageURL = canvas.toDataURL();
+
+        saveImage(imageId, imageURL);
+    }
+</script>
