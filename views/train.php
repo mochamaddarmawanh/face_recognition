@@ -13,41 +13,7 @@
     <!-- Image Sample Modal -->
     <div class="modal fade" id="imageSample" tabindex="-1" aria-labelledby="imageSampleLabel" aria-hidden="true">
         <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="imageSampleLabel">Class 1</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <img src="assets/img/other/me.png" alt="" class="img-fluid rounded-2 object-fit-contain w-100" style="width: 200px;">
-                    <div class="row mt-4">
-                        <div class="col-4 text-start">
-                            <i class="bi-chevron-left"></i>
-                        </div>
-                        <div class="col-4 text-center">
-                            <span>1 / 20</span>
-                        </div>
-                        <div class="col-4 text-end">
-                            <i class="bi-chevron-right"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <div class="container-fluid p-0">
-                        <div class="row">
-                            <div class="col-9">
-                                <select name="" id="" class="form-select w-100">
-                                    <option value="">Class 1</option>
-                                    <option value="">Class 2</option>
-                                </select>
-                            </div>
-                            <div class="col-auto">
-                                <button type="button" class="btn btn-danger" style="margin-left: 6px;"><i class="bi-trash"></i></button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class="modal-content" id="modal_sample"></div>
         </div>
     </div>
 

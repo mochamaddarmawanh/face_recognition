@@ -92,11 +92,12 @@
             return parseInt(b.split("-")[1]) - parseInt(a.split("-")[1]);
         });
 
-        imageKeys.forEach(function(key) {
+        imageKeys.forEach(function(key, index) {
             const value = localStorage.getItem(key);
 
             const newImageDiv = document.createElement('div');
-            newImageDiv.className = 'col-4 col-lg-3 p-1';
+            newImageDiv.className = 'col-4 col-lg-3';
+            newImageDiv.style.padding = '1px';
 
             const imgTrashDiv = document.createElement('div');
             imgTrashDiv.className = 'img-trash';
@@ -105,6 +106,9 @@
             aToggle.href = '#';
             aToggle.setAttribute('data-bs-toggle', 'modal');
             aToggle.setAttribute('data-bs-target', '#imageSample');
+            aToggle.onclick = function() {
+                $('#modal_sample').load('models/modal_sample.php?number=' + number + '&key=' + key + '&index=' + parseInt(index + 1));
+            };
 
             const newImage = document.createElement('img');
             newImage.src = value;
