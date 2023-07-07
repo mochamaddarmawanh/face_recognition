@@ -52,7 +52,7 @@
         setCookie('newClass', 1, 1);
     });
 
-    if (localStorage.length === 0 || Object.keys(localStorage).filter(key => key.startsWith(<?= $_GET['number'] ?> + "-")).length === 0) {
+    if (Object.keys(localStorage).filter(key => key.startsWith(<?= $_GET['number'] ?> + "-")).length === 0) {
         document.getElementById('image_samples_button_<?= $_GET['number'] ?>').innerText = "0 Sample";
     } else {
         const sampleCount = Object.keys(localStorage).filter(key => key.startsWith(<?= $_GET['number'] ?> + "-")).length;
@@ -87,6 +87,7 @@
     function displayImageLocalData(number) {
         const imageKeys = keyImageLocalData(number);
         const imgSamplesDiv = document.getElementById('imgSamples_' + number);
+        imgSamplesDiv.innerHTML = "";
 
         imageKeys.sort(function(a, b) {
             return parseInt(b.split("-")[1]) - parseInt(a.split("-")[1]);
@@ -117,18 +118,22 @@
 
             newImage.setAttribute('id', key);
 
-            const aTrash = document.createElement('a');
-            aTrash.href = '#';
+            const divTrash = document.createElement('div');
+            divTrash.style.cursor = 'pointer';
+            divTrash.onclick = function() {
+                localStorage.removeItem(key);
+                displayImageLocalData(number);
+            };
 
             const iTrash = document.createElement('i');
             iTrash.className = 'bi bi-trash text-light';
 
-            aTrash.appendChild(iTrash);
+            divTrash.appendChild(iTrash);
 
             aToggle.appendChild(newImage);
 
             imgTrashDiv.appendChild(aToggle);
-            imgTrashDiv.appendChild(aTrash);
+            imgTrashDiv.appendChild(divTrash);
 
             newImageDiv.appendChild(imgTrashDiv);
 
@@ -181,6 +186,10 @@
             }).catch(function(error) {
                 console.error('Error:', error);
             });
+
+            if (Object.keys(localStorage).filter(key => key.startsWith(number + "-")).length === 0) {
+                document.getElementById('imgSamples_' + number).innerHTML = "<div class='alert alert-primary'>No sample were made.</div>";
+            }
         }).catch(function(error) {
             $('#content_' + number).load('models/method.php?number=' + number);
             alert('There was an error opening your webcam. Make sure permissions are enabled or switch to image uploading.');
@@ -214,6 +223,10 @@
         }).then(function(mediaStream) {
             lengthImageLocalData(number);
             displayImageLocalData(number);
+
+            if (Object.keys(localStorage).filter(key => key.startsWith(number + "-")).length === 0) {
+                document.getElementById('imgSamples_' + number).innerHTML = "<div class='alert alert-primary mt-1'>No sample were made.</div>";
+            }
         }).catch(function(error) {
             $('#content_' + number).load('models/method.php?number=' + number);
             alert(error);
@@ -230,6 +243,17 @@
         }).then(function(mediaStream) {
             lengthImageLocalData(number);
             displayImageLocalData(number);
+
+            if (Object.keys(localStorage).filter(key => key.startsWith(number + "-")).length === 0) {
+                document.getElementById('image_samples_button_' + number).innerText = "0 Sample";
+            } else {
+                const sampleCount = Object.keys(localStorage).filter(key => key.startsWith(number + "-")).length;
+                document.getElementById('image_samples_button_' + number).innerText = sampleCount + " Samples";
+            }
+
+            if (Object.keys(localStorage).filter(key => key.startsWith(number + "-")).length === 0) {
+                document.getElementById('imgSamples_' + number).innerHTML = "<div class='alert alert-primary'>No sample were made.</div>";
+            }
         }).catch(function(error) {
             $('#content_' + number).load('models/method.php?number=' + number);
             alert(error);

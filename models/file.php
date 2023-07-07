@@ -3,9 +3,9 @@
         <p>File</p>
     </div>
     <div class="col-2 mt-1">
-        <a href="#" class="text-dark" onclick="back(<?= $_GET['number'] ?>)">
+        <div class="text-dark" style="cursor: pointer;" onclick="back(<?= $_GET['number'] ?>)">
             <i class="bi-x float-end" style="font-size: 35px; margin-top: -10px; margin-right: -5px;"></i>
-        </a>
+        </div>
     </div>
 </div>
 <input type="file" name="image" id="image_<?= $_GET['number'] ?>" class="form-control">
@@ -17,17 +17,21 @@
         upload(<?= $_GET['number'] ?>);
     });
 
-    if (localStorage.length === 0) {
-        document.getElementById('imgSamples_' + <?= $_GET['number'] ?>).innerHTML = "<div class='alert alert-primary mt-1'>No sample were made.</div>";
-    }
-
     function lengthImageLocalData(number) {
         const image_samples = document.getElementById('image_samples_' + number);
 
-        if (localStorage.length === 0) {
+        const imageKeys = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key.startsWith(number + "-")) {
+                imageKeys.push(key);
+            }
+        }
+
+        if (imageKeys.length === 0) {
             image_samples.innerText = "Add Image Samples:";
         } else {
-            image_samples.innerText = localStorage.length + " Image Samples";
+            image_samples.innerText = imageKeys.length + " Image Samples";
         }
     }
 
@@ -125,11 +129,12 @@
             return parseInt(b.split("-")[1]) - parseInt(a.split("-")[1]);
         });
 
-        imageKeys.forEach(function(key) {
+        imageKeys.forEach(function(key, index) {
             const value = localStorage.getItem(key);
 
             const newImageDiv = document.createElement('div');
-            newImageDiv.className = 'col-4 col-lg-3 p-1';
+            newImageDiv.className = 'col-4 col-lg-3';
+            newImageDiv.style.padding = '1px';
 
             const imgTrashDiv = document.createElement('div');
             imgTrashDiv.className = 'img-trash';
@@ -138,6 +143,9 @@
             aToggle.href = '#';
             aToggle.setAttribute('data-bs-toggle', 'modal');
             aToggle.setAttribute('data-bs-target', '#imageSample');
+            aToggle.onclick = function() {
+                $('#modal_sample').load('models/modal_sample.php?number=' + number + '&key=' + key + '&index=' + parseInt(index + 1));
+            };
 
             const newImage = document.createElement('img');
             newImage.src = value;
@@ -146,18 +154,26 @@
 
             newImage.setAttribute('id', key);
 
-            const aTrash = document.createElement('a');
-            aTrash.href = '#';
+            const divTrash = document.createElement('div');
+            divTrash.style.cursor = 'pointer';
+            divTrash.onclick = function() {
+                localStorage.removeItem(key);
+                displayImageLocalData(number);
+
+                if (localStorage.length === 0) {
+                    document.getElementById('imgSamples_' + <?= $_GET['number'] ?>).innerHTML = "<div class='alert alert-primary mt-1'>No sample were made.</div>";
+                }
+            };
 
             const iTrash = document.createElement('i');
             iTrash.className = 'bi bi-trash text-light';
 
-            aTrash.appendChild(iTrash);
+            divTrash.appendChild(iTrash);
 
             aToggle.appendChild(newImage);
 
             imgTrashDiv.appendChild(aToggle);
-            imgTrashDiv.appendChild(aTrash);
+            imgTrashDiv.appendChild(divTrash);
 
             newImageDiv.appendChild(imgTrashDiv);
 

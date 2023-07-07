@@ -5,9 +5,9 @@
                 <p>Webcam</p>
             </div>
             <div class="col-2 mt-1">
-                <a href="#" class="text-dark" onclick="back_webcam(<?= $_GET['number'] ?>)">
+                <div class="text-dark" style="cursor: pointer;" onclick="back_webcam(<?= $_GET['number'] ?>)">
                     <i class="bi-x float-end" style="font-size: 35px; margin-top: -10px; margin-right: -5px;"></i>
-                </a>
+                </div>
             </div>
         </div>
         <select name="" id="webcam_select_<?= $_GET['number'] ?>" class="form-select" onchange="change_webcam(<?= $_GET['number'] ?>)"></select>
@@ -37,10 +37,6 @@
             }
         }
         return null;
-    }
-
-    if (localStorage.length === 0) {
-        document.getElementById('imgSamples_<?= $_GET['number'] ?>').innerHTML = "<div class='alert alert-primary'>No sample were made.</div>";
     }
 
     function lengthImageLocalData(number) {
@@ -144,18 +140,26 @@
 
             newImage.setAttribute('id', key);
 
-            const aTrash = document.createElement('a');
-            aTrash.href = '#';
+            const divTrash = document.createElement('div');
+            divTrash.style.cursor = 'pointer';
+            divTrash.onclick = function() {
+                localStorage.removeItem(key);
+                displayImageLocalData(number);
+
+                if (localStorage.length === 0) {
+                    document.getElementById('imgSamples_<?= $_GET['number'] ?>').innerHTML = "<div class='alert alert-primary'>No sample were made.</div>";
+                }
+            };
 
             const iTrash = document.createElement('i');
             iTrash.className = 'bi bi-trash text-light';
 
-            aTrash.appendChild(iTrash);
+            divTrash.appendChild(iTrash);
 
             aToggle.appendChild(newImage);
 
             imgTrashDiv.appendChild(aToggle);
-            imgTrashDiv.appendChild(aTrash);
+            imgTrashDiv.appendChild(divTrash);
 
             newImageDiv.appendChild(imgTrashDiv);
 

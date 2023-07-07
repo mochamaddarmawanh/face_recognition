@@ -19,19 +19,9 @@
         <p style="margin: 20px 0px 5px;" id="image_samples_<?= $_GET['number'] ?>"></p>
     </div>
     <div class="col-2 mt-1">
-        <a href="#" class="text-dark" onclick="back(<?= $_GET['number'] ?>)">
+        <div class="text-dark" style="cursor: pointer;" onclick="back(<?= $_GET['number'] ?>)">
             <i class="bi-x float-end" style="font-size: 35px; margin: 5px -5px 5px;"></i>
-        </a>
+        </div>
     </div>
 </div>
 <div class="row img-samples ps-2 me-0" id="imgSamples_<?= $_GET['number'] ?>"></div>
-
-<script>
-    if (localStorage.length === 0 || Object.keys(localStorage).filter(key => key.startsWith(<?= $_GET['number'] ?> + "-")).length === 0) {
-        document.getElementById('imgSamples_<?= $_GET['number'] ?>').innerHTML = "<div class='alert alert-primary mt-1'>No sample were made.</div>";
-        document.getElementById('image_samples_button_<?= $_GET['number'] ?>').innerText = "0 Sample";
-    } else {
-        const sampleCount = Object.keys(localStorage).filter(key => key.startsWith(<?= $_GET['number'] ?> + "-")).length;
-        document.getElementById('image_samples_button_<?= $_GET['number'] ?>').innerText = sampleCount + " Samples";
-    }
-</script>
