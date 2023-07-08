@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-11">
                 <div id="class_name" onclick="change_class_name(event, <?= $_GET['number'] ?>)">
-                    <span class="h5" contenteditable="true">Class <?= $_GET['number'] ?></span>&nbsp;&nbsp;
+                    <span class="h5" contenteditable="true" id="span_class_name_<?= $_GET['number'] ?>">Class <?= $_GET['number'] ?></span>&nbsp;&nbsp;
                     <span class="text-decoration-none text-secondary" style="cursor: pointer;" onclick="pencil_click(event, <?= $_GET['number'] ?>)">
                         <i class="bi-pencil" style="font-size: 20px;"></i>
                     </span>
@@ -13,9 +13,9 @@
                 <div class="dropdown">
                     <i class="bi-three-dots-vertical mt-1" type="button" data-bs-toggle="dropdown" aria-expanded="false"></i>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item text-secondary disabled" href="#">Delete Class</a></li>
-                        <li><a class="dropdown-item text-secondary disabled" href="#">Remove All Samples</a></li>
-                        <li><a class="dropdown-item text-secondary disabled" href="#">Download All Samples</a></li>
+                        <li><a class="dropdown-item disabled" onclick="delete_class(<?= $_GET['number'] ?>)">Delete Class</a></li>
+                        <li><span class="dropdown-item" style="cursor: pointer;" onclick="remove_all_samples(<?= $_GET['number'] ?>)">Remove All Samples</span></li>
+                        <li><span class="dropdown-item" style="cursor: pointer;" onclick="download_samples(<?= $_GET['number'] ?>)">Download Samples</span></li>
                     </ul>
                 </div>
             </div>
@@ -42,6 +42,7 @@
 </div>
 
 <!-- <button onclick="read()">read</button> -->
+<!-- <button onclick="test()">test</button> -->
 
 <script>
     // function read() {
@@ -50,6 +51,20 @@
     //         var value = localStorage.getItem(key);
     //         console.log("Key: " + key + ", Value: " + value);
     //     }
+
+    //     for (var i = 0; i < getCookie('newClass'); i++) {
+    //         const check_class_name = Object.keys(localStorage).filter(key => key.startsWith('class-' + i));
+    //         if (check_class_name.length > 0) {
+    //             console.log(localStorage.getItem('class-' + i));
+    //         }
+    //     }
+
+    //     console.log("=============================== end.");
+    // }
+
+    // function test() {
+    //     var nameValue = document.getElementById('name').innerHTML;
+    //     console.log(nameValue);
     // }
 
     window.addEventListener('beforeunload', function(event) {
@@ -337,5 +352,95 @@
         }
 
         $('#content_' + number).load('models/method.php?number=' + number);
+    }
+
+    function delete_class(number) {
+        // const newClass = parseInt(getCookie('newClass'));
+
+        // if (newClass === 1) {
+        //     alert('minimum of class at least one');
+        //     return;
+        // }
+
+        // setCookie('newClass', newClass - 1, 1);
+
+        // document.getElementById('class').innerHTML = "";
+
+        // for (let i = 1; i <= parseInt(getCookie('newClass')); i++) {
+        //     $.ajax({
+        //         url: 'models/class.php?number=' + i,
+        //         type: 'POST',
+        //         dataType: 'html',
+        //         success: function(response) {
+        //             $('#class').append(response);
+
+        //             const check_class_name = Object.keys(localStorage).filter(key => key.startsWith('class-' + i));
+
+        //             if (check_class_name.length > 0) {
+        //                 document.getElementById('class_name').innerText = localStorage.getItem('class-' + i);
+        //             }
+        //         },
+        //         error: function(xhr, status, error) {
+        //             console.error(error);
+        //         }
+        //     });
+        // }
+
+        alert('under contruction');
+    }
+
+    function remove_all_samples(number) {
+        const keys = Object.keys(localStorage).filter(key => key.startsWith(number + "-"));
+
+        keys.forEach(key => {
+            localStorage.removeItem(key);
+        });
+
+        const imgSamples = document.getElementById('imgSamples_' + number);
+
+        if (imgSamples) {
+            lengthImageLocalData(number);
+            displayImageLocalData(number);
+
+            imgSamples.innerHTML = "<div class='alert alert-primary'>No sample were made.</div>";
+        } else {
+            document.getElementById('image_samples_button_' + number).innerText = "0 Sample";
+        }
+    }
+
+    function download_samples(number) {
+        const keys = Object.keys(localStorage).filter(key => key.startsWith(number + "-"));
+
+        if (keys.length === 0) {
+            alert('No images found in storage for this class');
+            return;
+        }
+
+        const zip = new JSZip();
+
+        keys.forEach(key => {
+            const imageData = localStorage.getItem(key);
+
+            if (!imageData) {
+                console.error(`Image data not found in storage for the key: ${key}`);
+                return;
+            }
+
+            const base64Data = imageData.split(',')[1];
+
+            zip.file(key + '.jpeg', base64Data, {
+                base64: true
+            });
+        });
+
+        const span_class_name = document.getElementById('span_class_name_' + number).innerHTML;
+
+        zip.generateAsync({
+            type: 'blob'
+        }).then(blob => {
+            saveAs(blob, 'image_samples_' + span_class_name.toLowerCase().replace(/\s/g, '_') + '.zip');
+        }).catch(error => {
+            console.error('Error creating the ZIP file:', error);
+        });
     }
 </script>

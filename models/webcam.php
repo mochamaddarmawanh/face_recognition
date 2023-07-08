@@ -181,10 +181,6 @@
         });
     }
 
-    function clearAllLocalData() {
-        localStorage.clear();
-    }
-
     function start_capture(number) {
         const video = document.getElementById('video_' + number);
         if (video.readyState === 4) {

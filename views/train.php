@@ -50,7 +50,7 @@
                     setCookie('newClass', newClass, 1);
                 },
                 error: function(xhr, status, error) {
-                    console.error('Error:', error);
+                    console.error(error);
                 }
             });
         }
