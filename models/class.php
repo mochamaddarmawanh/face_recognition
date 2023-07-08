@@ -2,7 +2,12 @@
     <div class="card-header bg-white">
         <div class="row">
             <div class="col-11">
-                <h5>Class <?= $_GET['number'] ?> &nbsp;<a href="#" class="text-decoration-none text-secondary"><i class="bi-pencil" style="font-size: 20px;"></i></a></h5>
+                <div id="class_name" onclick="change_class_name(event, <?= $_GET['number'] ?>)">
+                    <span class="h5" contenteditable="true">Class <?= $_GET['number'] ?></span>&nbsp;&nbsp;
+                    <span class="text-decoration-none text-secondary" style="cursor: pointer;" onclick="pencil_click(event, <?= $_GET['number'] ?>)">
+                        <i class="bi-pencil" style="font-size: 20px;"></i>
+                    </span>
+                </div>
             </div>
             <div class="col-1">
                 <div class="dropdown">
@@ -39,6 +44,14 @@
 <!-- <button onclick="read()">read</button> -->
 
 <script>
+    // function read() {
+    //     for (var i = 0; i < localStorage.length; i++) {
+    //         var key = localStorage.key(i);
+    //         var value = localStorage.getItem(key);
+    //         console.log("Key: " + key + ", Value: " + value);
+    //     }
+    // }
+
     window.addEventListener('beforeunload', function(event) {
         event.preventDefault();
         event.returnValue = '';
@@ -51,6 +64,43 @@
         localStorage.clear();
         setCookie('newClass', 1, 1);
     });
+
+    function change_class_name(event, number) {
+        const span = event.target;
+        span.addEventListener('keydown', function(e) {
+            handleKeyPress(e, span, number);
+        });
+        span.addEventListener('blur', function(e) {
+            save_class_name(span.innerText, number);
+        });
+    }
+
+    function pencil_click(event, number) {
+        const span = event.target.parentElement.previousElementSibling;
+        span.contentEditable = true;
+        span.focus();
+        span.addEventListener('keydown', function(e) {
+            handleKeyPress(e, span, number);
+        });
+        span.addEventListener('blur', function(e) {
+            save_class_name(span.innerText, number);
+        });
+    }
+
+    function handleKeyPress(e, span, number) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            span.blur();
+            span.removeEventListener('keydown', function(event) {
+                handleKeyPress(event, span, number);
+            });
+            save_class_name(span.innerText, number);
+        }
+    }
+
+    function save_class_name(data, number) {
+        localStorage.setItem('class-' + number, data);
+    }
 
     if (Object.keys(localStorage).filter(key => key.startsWith(<?= $_GET['number'] ?> + "-")).length === 0) {
         document.getElementById('image_samples_button_<?= $_GET['number'] ?>').innerText = "0 Sample";
@@ -108,7 +158,21 @@
             aToggle.setAttribute('data-bs-toggle', 'modal');
             aToggle.setAttribute('data-bs-target', '#imageSample');
             aToggle.onclick = function() {
-                $('#modal_sample').load('models/modal_sample.php?number=' + number + '&key=' + key + '&index=' + parseInt(index + 1));
+                new Promise(function(resolve, reject) {
+                    $('#modal_sample').load('models/modal_sample.php?number=' + number + '&key=' + key + '&index=' + parseInt(index + 1), function() {
+                        resolve();
+                    }, function(error) {
+                        reject(error);
+                    });
+                }).then(function(mediaStream) {
+                    const check_class_name = Object.keys(localStorage).filter(key => key.startsWith('class-' + number));
+
+                    if (check_class_name.length > 0) {
+                        document.getElementById('imageSampleLabel').innerText = localStorage.getItem('class-' + number);
+                    }
+                }).catch(function(error) {
+                    console.log(error);
+                });
             };
 
             const newImage = document.createElement('img');
@@ -199,7 +263,6 @@
 
     function change_webcam(number) {
         const selectedWebcam = document.getElementById('webcam_select_' + number).value;
-        console.log(selectedWebcam)
 
         navigator.mediaDevices.getUserMedia({
             video: {
@@ -275,12 +338,4 @@
 
         $('#content_' + number).load('models/method.php?number=' + number);
     }
-
-    // function read() {
-    //     for (var i = 0; i < localStorage.length; i++) {
-    //         var key = localStorage.key(i);
-    //         var value = localStorage.getItem(key);
-    //         console.log("Key: " + key + ", Value: " + value);
-    //     }
-    // }
 </script>

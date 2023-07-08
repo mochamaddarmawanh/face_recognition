@@ -144,7 +144,21 @@
             aToggle.setAttribute('data-bs-toggle', 'modal');
             aToggle.setAttribute('data-bs-target', '#imageSample');
             aToggle.onclick = function() {
-                $('#modal_sample').load('models/modal_sample.php?number=' + number + '&key=' + key + '&index=' + parseInt(index + 1));
+                new Promise(function(resolve, reject) {
+                    $('#modal_sample').load('models/modal_sample.php?number=' + number + '&key=' + key + '&index=' + parseInt(index + 1), function() {
+                        resolve();
+                    }, function(error) {
+                        reject(error);
+                    });
+                }).then(function(mediaStream) {
+                    const check_class_name = Object.keys(localStorage).filter(key => key.startsWith('class-' + number));
+
+                    if (check_class_name.length > 0) {
+                        document.getElementById('imageSampleLabel').innerText = localStorage.getItem('class-' + number);
+                    }
+                }).catch(function(error) {
+                    console.log(error);
+                });
             };
 
             const newImage = document.createElement('img');
