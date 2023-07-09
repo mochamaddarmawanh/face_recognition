@@ -41,32 +41,7 @@
     </div>
 </div>
 
-<!-- <button onclick="read()">read</button> -->
-<!-- <button onclick="test()">test</button> -->
-
 <script>
-    // function read() {
-    //     for (var i = 0; i < localStorage.length; i++) {
-    //         var key = localStorage.key(i);
-    //         var value = localStorage.getItem(key);
-    //         console.log("Key: " + key + ", Value: " + value);
-    //     }
-
-    //     for (var i = 0; i < getCookie('newClass'); i++) {
-    //         const check_class_name = Object.keys(localStorage).filter(key => key.startsWith('class-' + i));
-    //         if (check_class_name.length > 0) {
-    //             console.log(localStorage.getItem('class-' + i));
-    //         }
-    //     }
-
-    //     console.log("=============================== end.");
-    // }
-
-    // function test() {
-    //     var nameValue = document.getElementById('name').innerHTML;
-    //     console.log(nameValue);
-    // }
-
     window.addEventListener('beforeunload', function(event) {
         event.preventDefault();
         event.returnValue = '';
@@ -114,7 +89,11 @@
     }
 
     function save_class_name(data, number) {
-        localStorage.setItem('class-' + number, data);
+        replace = data.replace(/[^a-zA-Z0-9]/g, ' ');
+
+        document.getElementById('span_class_name_' + number).innerText = replace;
+
+        localStorage.setItem('class-' + number, replace);
     }
 
     if (Object.keys(localStorage).filter(key => key.startsWith(<?= $_GET['number'] ?> + "-")).length === 0) {
