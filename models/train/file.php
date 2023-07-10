@@ -145,7 +145,7 @@
             aToggle.setAttribute('data-bs-target', '#imageSample');
             aToggle.onclick = function() {
                 new Promise(function(resolve, reject) {
-                    $('#modal_sample').load('models/modal_sample.php?number=' + number + '&key=' + key + '&index=' + parseInt(index + 1), function() {
+                    $('#modal_sample').load('models/train/modal_sample.php?number=' + number + '&key=' + key + '&index=' + parseInt(index + 1), function() {
                         resolve();
                     }, function(error) {
                         reject(error);

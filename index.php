@@ -10,7 +10,7 @@ $uri_segments = explode('/', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 if ($uri_segments[2] !== "") {
   if (in_array($uri_segments[2], array_column($pages['page'], 0))) {
       $title = $pages['page'][array_search($uri_segments[2], array_column($pages['page'], 0))][1];
-      include "models/_$uri_segments[2].php";
+      include "models/global/_$uri_segments[2].php";
       include "views/_top.php";
       include "views/$uri_segments[2].php";
       include "views/_bot.php";

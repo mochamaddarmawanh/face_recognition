@@ -48,7 +48,7 @@
         //     console.log(nameValue);
         // }
 
-        $('#class').load('models/class.php?number=1');
+        $('#class').load('models/train/class.php?number=1');
 
         function blockUIMyCustom() {
             $.blockUI({
@@ -86,7 +86,7 @@
             let newClass = parseInt(getCookie('newClass')) + 1;
 
             $.ajax({
-                url: 'models/class.php?number=' + newClass,
+                url: 'models/train/class.php?number=' + newClass,
                 type: 'POST',
                 dataType: 'html',
                 success: function(response) {
@@ -139,7 +139,7 @@
                 if (confirm(confirmText)) {
                     blockUIMyCustom();
                     $.ajax({
-                        url: 'models/training.php',
+                        url: 'models/train/training.php',
                         type: 'POST',
                         data: {
                             imageDataArray: JSON.stringify(imageDataArray),
@@ -191,6 +191,6 @@
         function delete_all_model() {
             localStorage.clear();
             setCookie('newClass', 1, 1);
-            $('#class').load('models/class.php?number=1');
+            $('#class').load('models/train/class.php?number=1');
         }
     </script>

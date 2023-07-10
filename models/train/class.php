@@ -153,7 +153,7 @@
             aToggle.setAttribute('data-bs-target', '#imageSample');
             aToggle.onclick = function() {
                 new Promise(function(resolve, reject) {
-                    $('#modal_sample').load('models/modal_sample.php?number=' + number + '&key=' + key + '&index=' + parseInt(index + 1), function() {
+                    $('#modal_sample').load('models/train/modal_sample.php?number=' + number + '&key=' + key + '&index=' + parseInt(index + 1), function() {
                         resolve();
                     }, function(error) {
                         reject(error);
@@ -216,7 +216,7 @@
 
     function webcam(number) {
         new Promise(function(resolve, reject) {
-            $('#content_' + number).load('models/webcam.php?number=' + number, function() {
+            $('#content_' + number).load('models/train/webcam.php?number=' + number, function() {
                 resolve();
             }, function(error) {
                 reject(error);
@@ -249,7 +249,7 @@
                 document.getElementById('imgSamples_' + number).innerHTML = "<div class='alert alert-primary'>No sample were made.</div>";
             }
         }).catch(function(error) {
-            $('#content_' + number).load('models/method.php?number=' + number);
+            $('#content_' + number).load('models/train/method.php?number=' + number);
             alert('There was an error opening your webcam. Make sure permissions are enabled or switch to image uploading.');
             console.log(error)
         });
@@ -272,7 +272,7 @@
 
     function file(number) {
         new Promise(function(resolve, reject) {
-            $('#content_' + number).load('models/file.php?number=' + number, function() {
+            $('#content_' + number).load('models/train/file.php?number=' + number, function() {
                 resolve();
             }, function(error) {
                 reject(error);
@@ -285,14 +285,14 @@
                 document.getElementById('imgSamples_' + number).innerHTML = "<div class='alert alert-primary mt-1'>No sample were made.</div>";
             }
         }).catch(function(error) {
-            $('#content_' + number).load('models/method.php?number=' + number);
+            $('#content_' + number).load('models/train/method.php?number=' + number);
             alert(error);
         });
     }
 
     function preview(number) {
         new Promise(function(resolve, reject) {
-            $('#content_' + number).load('models/preview.php?number=' + number, function() {
+            $('#content_' + number).load('models/train/preview.php?number=' + number, function() {
                 resolve();
             }, function(error) {
                 reject(error);
@@ -312,13 +312,13 @@
                 document.getElementById('imgSamples_' + number).innerHTML = "<div class='alert alert-primary'>No sample were made.</div>";
             }
         }).catch(function(error) {
-            $('#content_' + number).load('models/method.php?number=' + number);
+            $('#content_' + number).load('models/train/method.php?number=' + number);
             alert(error);
         });
     }
 
     function back(number) {
-        $('#content_' + number).load('models/method.php?number=' + number);
+        $('#content_' + number).load('models/train/method.php?number=' + number);
     }
 
     function back_webcam(number) {
@@ -330,7 +330,7 @@
             });
         }
 
-        $('#content_' + number).load('models/method.php?number=' + number);
+        $('#content_' + number).load('models/train/method.php?number=' + number);
     }
 
     function delete_class(number) {
@@ -347,7 +347,7 @@
 
         // for (let i = 1; i <= parseInt(getCookie('newClass')); i++) {
         //     $.ajax({
-        //         url: 'models/class.php?number=' + i,
+        //         url: 'models/train/class.php?number=' + i,
         //         type: 'POST',
         //         dataType: 'html',
         //         success: function(response) {

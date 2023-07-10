@@ -96,7 +96,7 @@
 
         const next_image_key = image_keys[next_index - 1];
         if (next_image_key && next_image_key.k) {
-            $('#modal_sample').load('models/modal_sample.php?number=' + <?= $_GET['number'] ?> + '&key=' + next_image_key.k + '&index=' + next_index);
+            $('#modal_sample').load('models/train/modal_sample.php?number=' + <?= $_GET['number'] ?> + '&key=' + next_image_key.k + '&index=' + next_index);
         }
     }
 
@@ -136,7 +136,7 @@
         });
 
         const previous_image_key = image_keys[previous_index - 1];
-        $('#modal_sample').load('models/modal_sample.php?number=' + <?= $_GET['number'] ?> + '&key=' + previous_image_key.k + '&index=' + previous_index);
+        $('#modal_sample').load('models/train/modal_sample.php?number=' + <?= $_GET['number'] ?> + '&key=' + previous_image_key.k + '&index=' + previous_index);
     }
 
     function modal_delete() {
@@ -199,10 +199,10 @@
 
         const next_image_key = image_keys[image_number - 1];
         if (next_image_key && next_image_key.k) {
-            $('#modal_sample').load('models/modal_sample.php?number=' + <?= $_GET['number'] ?> + '&key=' + next_image_key.k + '&index=' + image_index);
+            $('#modal_sample').load('models/train/modal_sample.php?number=' + <?= $_GET['number'] ?> + '&key=' + next_image_key.k + '&index=' + image_index);
             displayImage(<?= $_GET['number'] ?>, <?= json_encode($_GET['key']) ?>, next_image_key.k);
         } else if (image_keys[0] && image_keys[0].k) {
-            $('#modal_sample').load('models/modal_sample.php?number=' + <?= $_GET['number'] ?> + '&key=' + image_keys[0].k + '&index=' + 1);
+            $('#modal_sample').load('models/train/modal_sample.php?number=' + <?= $_GET['number'] ?> + '&key=' + image_keys[0].k + '&index=' + 1);
             displayImage(<?= $_GET['number'] ?>, <?= json_encode($_GET['key']) ?>, image_keys[0].k);
         }
     }
@@ -243,7 +243,7 @@
             return parseInt(b.k.split("-")[1]) - parseInt(a.k.split("-")[1]);
         });
 
-        $('#modal_sample').load('models/modal_sample.php?number=' + modal_select_class_value + '&key=' + image_keys[0].k + '&index=1');
+        $('#modal_sample').load('models/train/modal_sample.php?number=' + modal_select_class_value + '&key=' + image_keys[0].k + '&index=1');
     }
 
     displayModal();

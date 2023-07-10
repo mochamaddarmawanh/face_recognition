@@ -37,7 +37,7 @@ if ($allDataDifferent) {
 
     foreach ($imageDataArray as $class => $images) {
         $name = str_replace(' ', '_', $className[$class]);
-        $folderPath = "../assets/img/lfw/" . $name;
+        $folderPath = "../../assets/img/lfw/" . $name;
 
         $stmt = $conn->prepare("INSERT INTO data (name, sum) VALUES (?, ?)");
         $sum = count($images);
@@ -67,7 +67,7 @@ if ($allDataDifferent) {
             $stmt->bind_param("s", $insertedName);
             $stmt->execute();
 
-            $folderPath = "../assets/img/lfw/" . $insertedName;
+            $folderPath = "../../assets/img/lfw/" . $insertedName;
             deleteDirectory($folderPath);
         }
 
