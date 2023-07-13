@@ -21,7 +21,7 @@ if ($uri_segments[2] !== "") {
       include "views/_bot.php";
   }
 } else {
-  $title = "About Teachable Machine";
+  $title = "About Face Recognition";
   include "views/_top.php";
   include "views/about.php";
   include "views/_bot.php";
