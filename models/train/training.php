@@ -1,6 +1,6 @@
 <?php
 
-include('global/databases.php');
+include('../global/databases.php');
 
 if ($conn->connect_error) {
     echo "Connection to the database failed: " . $conn->connect_error . ".";
@@ -9,6 +9,7 @@ if ($conn->connect_error) {
 
 $imageDataArray = json_decode($_POST['imageDataArray'], true);
 $className = json_decode($_POST['className'], true);
+$descriptors = json_decode($_POST['descriptors'], true);
 
 $duplicateName = "";
 $errorMessage = "";
@@ -17,7 +18,7 @@ $hasError = false;
 
 foreach ($className as $class => $name) {
     $n = str_replace(' ', '_', $name);
-    $stmt = $conn->prepare("SELECT COUNT(*) AS count FROM data WHERE name = ?");
+    $stmt = $conn->prepare("SELECT COUNT(*) AS count FROM faces WHERE name = ?");
     $stmt->bind_param("s", $n);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -37,11 +38,12 @@ if ($allDataDifferent) {
 
     foreach ($imageDataArray as $class => $images) {
         $name = str_replace(' ', '_', $className[$class]);
-        $folderPath = "../../assets/img/lfw/" . $name;
+        $folderPath = "../../assets/img/faces/" . $name;
 
-        $stmt = $conn->prepare("INSERT INTO data (name, sum) VALUES (?, ?)");
+        $stmt = $conn->prepare("INSERT INTO faces (name, compute, sum) VALUES (?, ?, ?)");
+        $compute = json_encode($descriptors[$class][0]['descriptors']);
         $sum = count($images);
-        $stmt->bind_param("si", $name, $sum);
+        $stmt->bind_param("ssi", $name, $compute, $sum);
         $stmt->execute();
         if ($stmt->error) {
             $insertError = true;
@@ -63,11 +65,11 @@ if ($allDataDifferent) {
 
     if ($insertError) {
         foreach ($insertedNames as $insertedName) {
-            $stmt = $conn->prepare("DELETE FROM data WHERE name = ?");
+            $stmt = $conn->prepare("DELETE FROM faces WHERE name = ?");
             $stmt->bind_param("s", $insertedName);
             $stmt->execute();
 
-            $folderPath = "../../assets/img/lfw/" . $insertedName;
+            $folderPath = "../../assets/img/faces/" . $insertedName;
             deleteDirectory($folderPath);
         }
 

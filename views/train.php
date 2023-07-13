@@ -99,7 +99,7 @@
             });
         }
 
-        function train() {
+        async function train() {
             const count_class = parseInt(getCookie('newClass'));
             let imageDataArray = {};
             let className = {};
@@ -143,27 +143,28 @@
                         type: 'POST',
                         data: {
                             imageDataArray: JSON.stringify(imageDataArray),
-                            className: JSON.stringify(className)
+                            className: JSON.stringify(className),
+                            descriptors: JSON.stringify(await computeDescriptors(imageDataArray))
                         },
                         success: function(response) {
                             $.unblockUI();
                             if (response === "") {
-                                alert('Data gambar berhasil di latih.');
-                                alert('Untuk melakukan test pengenalan wajah silahkan kembali kehalaman sebelumnya halaman "Test Model".');
+                                alert('Data gambar berhasil dilatih dan di simpan di database.');
+                                alert('Untuk melakukan test pengenalan wajah, silahkan kembali ke halaman sebelumnya "Test Model".');
                                 document.getElementById('train_success').classList.remove('visually-hidden');
                                 document.getElementById('train_fail').classList.add('visually-hidden');
                             } else {
                                 alert(response);
                                 document.getElementById('train_fail').classList.remove('visually-hidden');
                                 document.getElementById('train_fail').innerHTML = `
-                                    <strong>` + response + `</strong> Please rename the class to a different name and try again.
+                                    <strong>` + response + `</strong> Silahkan ubah nama kelas menjadi nama yang berbeda dan coba lagi.
                                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 `;
                                 document.getElementById('train_success').classList.add('visually-hidden');
                             }
                         },
                         error: function(xhr, status, error) {
-                            alert('Maaf telah terjadi kesalahan saat melatih model, silahkan ulangi kembali.');
+                            alert('Maaf telah terjadi kesalahan saat melatih model, silahkan coba lagi.');
                             console.log(xhr.responseText);
                             console.log(status);
                             console.log(error);
@@ -186,6 +187,40 @@
                     alert('Kelas "' + document.getElementById('span_class_name_' + empty_class).innerHTML + '" memerlukan setidaknya 1 sampel.');
                 }
             }
+        }
+
+        async function computeDescriptors(imageDataArray) {
+            await Promise.all([
+                faceapi.nets.tinyFaceDetector.loadFromUri('/teachable_machine/models/face-api'),
+                faceapi.nets.faceRecognitionNet.loadFromUri('/teachable_machine/models/face-api'),
+                faceapi.nets.faceLandmark68Net.loadFromUri('/teachable_machine/models/face-api'),
+                faceapi.nets.ssdMobilenetv1.loadFromUri('/teachable_machine/models/face-api')
+            ]);
+
+            const labeledFaceDescriptors = {};
+
+            for (const cls in imageDataArray) {
+                if (imageDataArray.hasOwnProperty(cls)) {
+                    const descriptions = [];
+
+                    for (const imageObj of imageDataArray[cls]) {
+                        const img = await faceapi.fetchImage(imageObj.val);
+                        const detections = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor();
+
+                        if (detections && detections.descriptor) {
+                            descriptions.push(detections.descriptor);
+                        }
+                    }
+
+                    if (descriptions.length > 0) {
+                        labeledFaceDescriptors[cls] = [{
+                            descriptors: descriptions
+                        }];
+                    }
+                }
+            }
+
+            return labeledFaceDescriptors;
         }
 
         function delete_all_model() {

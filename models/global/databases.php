@@ -3,6 +3,6 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "teachable_machine";
+$dbname = "face_recognition";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
