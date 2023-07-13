@@ -213,9 +213,13 @@
                     }
 
                     if (descriptions.length > 0) {
-                        labeledFaceDescriptors[cls] = [{
+                        if (!labeledFaceDescriptors.hasOwnProperty(cls)) {
+                            labeledFaceDescriptors[cls] = [];
+                        }
+
+                        labeledFaceDescriptors[cls].push({
                             descriptors: descriptions
-                        }];
+                        });
                     }
                 }
             }

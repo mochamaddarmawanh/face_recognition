@@ -3,10 +3,10 @@
 include('../global/databases.php');
 
 if (!$conn) {
-    die('Koneksi database gagal: ' . mysqli_connect_error());
+  die('Koneksi database gagal: ' . mysqli_connect_error());
 }
 
-$stmt = $conn->prepare("SELECT * FROM data LIMIT 1");
+$stmt = $conn->prepare("SELECT * FROM faces");
 $stmt->execute();
 
 $result = $stmt->get_result();
@@ -14,18 +14,13 @@ $result = $stmt->get_result();
 $data = array();
 
 while ($row = $result->fetch_assoc()) {
-    $temp = array(
-        'nama' => $row['name'],
-        'sum' => $row['sum']
-    );
-    $data[] = $temp;
+  $temp = array(
+    'name' => $row['name'],
+    'descriptions' => json_decode($row['compute'], true),
+    'sum' => $row['sum']
+  );
+  $data[] = $temp;
 }
-
-// Tambahkan satu data lagi
-$data[] = array(
-    'nama' => 'Mochamad_Darmawan_Hardjakusumah',
-    'sum' => 6
-);
 
 $conn->close();
 
