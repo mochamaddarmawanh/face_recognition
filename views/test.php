@@ -46,16 +46,21 @@
                                 </div>
                             </div>
                         </div>
-                        <select name="select_webcam" id="select_webcam" class="form-select" onchange="change_webcam()"></select>
+                        <select name="select_webcam" id="select_webcam" class="form-select" onchange="change_webcam()">
+                            <option>Loading...</option>
+                        </select>
                         <video id="video" style="display: none;"></video>
                     </div>
                     <div class="card-footer bg-white">
                         <p>Output:</p>
-                        <p style="margin-bottom: 10px; font-weight: 600;">Mochamad Darmawan Hardjakusumah</p>
-                        <div class="progress mb-3" role="progressbar" aria-label="Example with label" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
-                            <div class="progress-bar bg-primary" style="width: 25%">25%</div>
+                        <div id="output_detected">
+                            <p style="margin-bottom: 10px; font-weight: 600;">Loading...</p>
+                            <div class="progress mb-3" role="progressbar" aria-label="Example with label" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                <div class="progress-bar bg-primary" style="width: 0%">0%</div>
+                            </div>
                         </div>
                     </div>
+
                 </div>
                 <div id="file" style="display: none;">
                     <div class="card-body">
@@ -162,6 +167,14 @@
 
                         try {
                             const labeledFaceDescriptors = await loadLabeledImages();
+
+                            if (labeledFaceDescriptors.length === 0) {
+                                alert("Error: Face database is empty.");
+                                back_webcam();
+                                $.unblockUI();
+                                return;
+                            }
+
                             const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6);
 
                             async function processFrame() {
@@ -182,18 +195,55 @@
                                     const bestMatch = faceMatcher.findBestMatch(detection.descriptor);
                                     return {
                                         label: bestMatch.toString(),
-                                        distance: bestMatch.distance
+                                        distance: bestMatch.distance,
+                                        landmarks: detection.landmarks
                                     };
                                 });
 
-                                results.forEach((result, i) => {
-                                    const box = resizedDetections[i].detection.box;
-                                    const drawBox = new faceapi.draw.DrawBox(box, {
-                                        label: result.label
-                                    });
+                                document.getElementById('output_detected').innerHTML = '';
 
-                                    drawBox.draw(canvas);
-                                });
+                                if (results.length === 0) {
+                                    output_detected(0);
+                                } else {
+                                    results.forEach((result, i) => {
+                                        const box = resizedDetections[i].detection.box;
+                                        const detectedName = result.label.replace('_', ' ');
+                                        const accuracyPercentage = Math.round((1 - result.distance) * 100);
+                                        const landmarks = result.landmarks;
+                                        const drawBox = new faceapi.draw.DrawBox(box, {
+                                            label: detectedName
+                                        });
+
+                                        faceapi.draw.drawFaceLandmarks(canvas, landmarks);
+                                        drawBox.draw(canvas);
+
+                                        output_detected(accuracyPercentage, detectedName);
+                                    });
+                                }
+
+                                function output_detected(percentage, detectedName) {
+                                    const outputDetectedElement = document.getElementById('output_detected');
+                                    const notDetectedElement = document.createElement('p');
+                                    notDetectedElement.style.marginBottom = '10px';
+                                    notDetectedElement.style.fontWeight = '600';
+                                    notDetectedElement.textContent = detectedName || 'Face Not Detected';
+
+                                    const accuracyBarElement = document.createElement('div');
+                                    accuracyBarElement.className = 'progress mb-3';
+                                    accuracyBarElement.setAttribute('role', 'progressbar');
+                                    accuracyBarElement.setAttribute('aria-valuenow', percentage.toString());
+                                    accuracyBarElement.setAttribute('aria-valuemin', '0');
+                                    accuracyBarElement.setAttribute('aria-valuemax', '100');
+
+                                    const progressElement = document.createElement('div');
+                                    progressElement.className = 'progress-bar bg-primary';
+                                    progressElement.style.width = percentage + '%';
+                                    progressElement.textContent = percentage + '%';
+                                    accuracyBarElement.appendChild(progressElement);
+
+                                    outputDetectedElement.appendChild(notDetectedElement);
+                                    outputDetectedElement.appendChild(accuracyBarElement);
+                                }
 
                                 requestAnimationFrame(processFrame);
                             }
