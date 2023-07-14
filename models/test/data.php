@@ -16,8 +16,7 @@ $data = array();
 while ($row = $result->fetch_assoc()) {
   $temp = array(
     'name' => $row['name'],
-    'descriptions' => json_decode($row['compute'], true),
-    'sum' => $row['sum']
+    'descriptions' => json_decode($row['compute'], true)
   );
   $data[] = $temp;
 }

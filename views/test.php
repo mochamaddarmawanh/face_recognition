@@ -74,20 +74,17 @@
                                 </div>
                             </div>
                         </div>
-                        <input type="file" name="" id="" class="form-control mb-3">
+                        <input type="file" id="upload_input" class="form-control mb-3" onchange="upload_image()">
+                        <div id="image_uploaded"></div>
                     </div>
                     <div class="card-footer bg-white">
-                        <p class="mt-3">Output:</p>
-                        <div class="alert alert-primary">No sample were made.</div>
-                        <!-- <img src="assets/img/other/face-api-js.gif" alt="" class="img-fluid">
-                        <p class="mt-3" style="margin-bottom: 10px; font-weight: 600;">1. Mochamad Darmawan Hardjakusumah</p>
-                        <div class="progress mb-3" role="progressbar" aria-label="Example with label" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
-                            <div class="progress-bar bg-dark" style="width: 25%">25%</div>
+                        <p>Output:</p>
+                        <div id="file_output_detected">
+                            <p style="margin-bottom: 10px; font-weight: 600;">Waiting for uploading an image...</p>
+                            <div class="progress mb-3" role="progressbar" aria-label="Example with label" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                <div class="progress-bar bg-primary" style="width: 0%">0%</div>
+                            </div>
                         </div>
-                        <p class="mt-3" style="margin-bottom: 10px; font-weight: 600;">2. Fahrezi Huda Yusron</p>
-                        <div class="progress mb-3" role="progressbar" aria-label="Example with label" aria-valuenow="99" aria-valuemin="0" aria-valuemax="100">
-                            <div class="progress-bar bg-dark" style="width: 99%">99%</div>
-                        </div> -->
                     </div>
                 </div>
             </div>
@@ -114,6 +111,35 @@
                 overlayCSS: {
                     opacity: 0.5
                 },
+            });
+        }
+
+        async function loadLabeledImages() {
+            return new Promise(function(resolve, reject) {
+                $.ajax({
+                    url: 'models/test/data.php',
+                    method: 'GET',
+                    dataType: 'json',
+                    success: async function(response) {
+                        const labels = response.data;
+                        const labeledDescriptors = [];
+
+                        for (let i = 0; i < labels.length; i++) {
+                            const label = labels[i].name.replace('_', ' ');
+                            const descriptions = labels[i].descriptions;
+
+                            if (descriptions && descriptions.length > 0) {
+                                const descriptors = descriptions.map(d => new Float32Array(d));
+                                labeledDescriptors.push(new faceapi.LabeledFaceDescriptors(label, descriptors));
+                            }
+                        }
+
+                        resolve(labeledDescriptors);
+                    },
+                    error: function(xhr, status, error) {
+                        reject(error);
+                    }
+                });
             });
         }
 
@@ -169,13 +195,13 @@
                             const labeledFaceDescriptors = await loadLabeledImages();
 
                             if (labeledFaceDescriptors.length === 0) {
-                                alert("Error: Face database is empty.");
+                                alert("Data training kosong.");
                                 back_webcam();
                                 $.unblockUI();
                                 return;
                             }
 
-                            const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6);
+                            const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.45);
 
                             async function processFrame() {
                                 if (!isRunning) return;
@@ -261,35 +287,6 @@
                     });
                 });
             }
-
-            async function loadLabeledImages() {
-                return new Promise(function(resolve, reject) {
-                    $.ajax({
-                        url: 'models/test/data.php',
-                        method: 'GET',
-                        dataType: 'json',
-                        success: async function(response) {
-                            const labels = response.data;
-                            const labeledFaceDescriptors = [];
-
-                            for (let i = 0; i < labels.length; i++) {
-                                const label = labels[i].name.replace('_', ' ');
-                                const descriptions = labels[i].descriptions;
-
-                                if (descriptions && descriptions.length > 0) {
-                                    const descriptors = descriptions.map(d => new Float32Array(d));
-                                    labeledFaceDescriptors.push(new faceapi.LabeledFaceDescriptors(label, descriptors));
-                                }
-                            }
-
-                            resolve(labeledFaceDescriptors);
-                        },
-                        error: function(xhr, status, error) {
-                            reject(error);
-                        }
-                    });
-                });
-            }
         }
 
         function getAvailableWebcams() {
@@ -342,6 +339,136 @@
             method.style.display = 'none';
             webcam.style.display = 'none';
             file.style.display = 'inline';
+        }
+
+        function upload_image() {
+            blockUIMyCustom();
+
+            const input = document.getElementById('upload_input');
+            const imageContainer = document.getElementById('image_uploaded');
+            const outputDetectedElement = document.getElementById('file_output_detected');
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = async function(e) {
+                    const image = document.createElement('img');
+                    image.src = e.target.result;
+                    image.alt = e.target.result;
+                    image.className = 'rounded-2 w-100';
+
+                    imageContainer.innerHTML = '';
+                    outputDetectedElement.innerHTML = '';
+
+                    const notDetectedElement = document.createElement('p');
+                    notDetectedElement.style.marginBottom = '10px';
+                    notDetectedElement.style.fontWeight = '600';
+                    notDetectedElement.textContent = 'Waiting for uploading an image...';
+
+                    const accuracyBarElement = document.createElement('div');
+                    accuracyBarElement.className = 'progress mb-3';
+                    accuracyBarElement.setAttribute('role', 'progressbar');
+                    accuracyBarElement.setAttribute('aria-valuenow', '0');
+                    accuracyBarElement.setAttribute('aria-valuemin', '0');
+                    accuracyBarElement.setAttribute('aria-valuemax', '100');
+
+                    const progressElement = document.createElement('div');
+                    progressElement.className = 'progress-bar bg-primary';
+                    progressElement.style.width = '0%';
+                    progressElement.textContent = '0%';
+                    accuracyBarElement.appendChild(progressElement);
+
+                    outputDetectedElement.appendChild(notDetectedElement);
+                    outputDetectedElement.appendChild(accuracyBarElement);
+
+                    await Promise.all([
+                        faceapi.nets.tinyFaceDetector.loadFromUri('/teachable_machine/models/face-api'),
+                        faceapi.nets.faceRecognitionNet.loadFromUri('/teachable_machine/models/face-api'),
+                        faceapi.nets.faceLandmark68Net.loadFromUri('/teachable_machine/models/face-api'),
+                        faceapi.nets.ssdMobilenetv1.loadFromUri('/teachable_machine/models/face-api')
+                    ]);
+
+                    const canvas = faceapi.createCanvasFromMedia(image);
+
+                    canvas.className = 'rounded-2 mt-3 w-100';
+
+                    try {
+                        const labeledDescriptors = await loadLabeledImages();
+                        const faceMatcher = new faceapi.FaceMatcher(labeledDescriptors, 0.45);
+                        const detections = await faceapi.detectAllFaces(image, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptors();
+
+                        if (labeledDescriptors.length === 0) {
+                            alert("Data training kosong.");
+                            $.unblockUI();
+                            return;
+                        }
+
+                        if (detections.length === 0) {
+                            alert("Wajah tidak terdeteksi dalam gambar yang diunggah.");
+                            $.unblockUI();
+                            return;
+                        }
+
+                        const results = detections.map((detection) => {
+                            const bestMatch = faceMatcher.findBestMatch(detection.descriptor);
+                            return {
+                                label: bestMatch.toString(),
+                                distance: bestMatch.distance,
+                            };
+                        });
+
+                        results.forEach((result, i) => {
+                            const box = detections[i].detection.box;
+                            let detectedName = result.label.replace('_', ' ');
+                            let accuracyPercentage = Math.round((1 - result.distance) * 100);
+
+                            if (detectedName.toLowerCase().includes('unknown')) {
+                                detectedName = 'Unknown';
+                                accuracyPercentage = 0;
+                            }
+
+                            const drawBox = new faceapi.draw.DrawBox(box, {
+                                label: detectedName
+                            });
+
+                            imageContainer.appendChild(canvas);
+                            drawBox.draw(canvas);
+
+                            outputDetectedElement.innerHTML = '';
+
+                            for (let i = 1; i <= results.length; i++) {
+                                const notDetectedElement = document.createElement('p');
+                                notDetectedElement.style.marginBottom = '10px';
+                                notDetectedElement.style.fontWeight = '600';
+                                notDetectedElement.textContent = detectedName || 'Unknown';
+
+                                const accuracyBarElement = document.createElement('div');
+                                accuracyBarElement.className = 'progress mb-3';
+                                accuracyBarElement.setAttribute('role', 'progressbar');
+                                accuracyBarElement.setAttribute('aria-valuenow', accuracyPercentage.toString());
+                                accuracyBarElement.setAttribute('aria-valuemin', '0');
+                                accuracyBarElement.setAttribute('aria-valuemax', '100');
+
+                                const progressElement = document.createElement('div');
+                                progressElement.className = 'progress-bar bg-primary';
+                                progressElement.style.width = accuracyPercentage + '%';
+                                progressElement.textContent = accuracyPercentage + '%';
+                                accuracyBarElement.appendChild(progressElement);
+
+                                outputDetectedElement.appendChild(notDetectedElement);
+                                outputDetectedElement.appendChild(accuracyBarElement);
+                            }
+                        });
+
+                        $.unblockUI();
+                    } catch (error) {
+                        console.error('Error loading labeled images:', error);
+                        $.unblockUI();
+                    }
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            }
         }
 
         function back_file() {
