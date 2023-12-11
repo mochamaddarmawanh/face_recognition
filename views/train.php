@@ -191,10 +191,10 @@
 
         async function computeDescriptors(imageDataArray) {
             await Promise.all([
-                faceapi.nets.tinyFaceDetector.loadFromUri('/teachable_machine/models/face-api'),
-                faceapi.nets.faceRecognitionNet.loadFromUri('/teachable_machine/models/face-api'),
-                faceapi.nets.faceLandmark68Net.loadFromUri('/teachable_machine/models/face-api'),
-                faceapi.nets.ssdMobilenetv1.loadFromUri('/teachable_machine/models/face-api')
+                faceapi.nets.tinyFaceDetector.loadFromUri('/face_recognition/models/face-api'),
+                faceapi.nets.faceRecognitionNet.loadFromUri('/face_recognition/models/face-api'),
+                faceapi.nets.faceLandmark68Net.loadFromUri('/face_recognition/models/face-api'),
+                faceapi.nets.ssdMobilenetv1.loadFromUri('/face_recognition/models/face-api')
             ]);
 
             const labeledFaceDescriptors = {};

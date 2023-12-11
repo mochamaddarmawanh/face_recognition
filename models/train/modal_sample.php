@@ -150,7 +150,7 @@
         console.log(local_storage_length)
 
         if (local_storage_length === 0) {
-            document.getElementById('modal_image').src = "assets/img/other/empty-concept-illustration/3369473.jpg";
+            document.getElementById('modal_image').src = "assets/image/other/empty-concept-illustration/3369473.jpg";
             document.getElementById('modal_image').alt = "empty";
             document.getElementById('imgSamples_<?= $_GET['number'] ?>').innerHTML = "<div class='alert alert-primary'>No sample was made.</div>";
             document.getElementById('modal_pagination').innerText = "1 / 1";

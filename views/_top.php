@@ -2,15 +2,15 @@
 <html lang="en">
 
 <head>
-    <link rel="apple-touch-icon" href="assets/img/other/widyatama_logo.ico">
-    <link rel="shortcut icon" href="assets/img/other/widyatama_logo.ico">
+    <link rel="apple-touch-icon" href="assets/image/other/widyatama_logo.ico">
+    <link rel="shortcut icon" href="assets/image/other/widyatama_logo.ico">
     <title><?= $title ?> - Face Recognition</title>
-    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="assets/icon/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/library/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/library/bootstrap/icon/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="assets/library/custom/css/style.css" rel="stylesheet">
 
-    <script src="assets/js/jquery-3.7.0.min.js"></script>
-    <script src="assets/js/jquery.blockUI.js"></script>
+    <script src="assets/library/jquery/jquery-3.7.0.min.js"></script>
+    <script src="assets/library/jquery/jquery.blockUI.js"></script>
 </head>
 
 <body>

@@ -38,7 +38,7 @@ if ($allDataDifferent) {
 
     foreach ($imageDataArray as $class => $images) {
         $name = str_replace(' ', '_', $className[$class]);
-        $folderPath = "../../assets/img/faces/" . $name;
+        $folderPath = "../../assets/image/faces/" . $name;
 
         $stmt = $conn->prepare("INSERT INTO faces (name, compute, sum) VALUES (?, ?, ?)");
         $compute = json_encode($descriptors[$class][0]['descriptors']);
@@ -69,7 +69,7 @@ if ($allDataDifferent) {
             $stmt->bind_param("s", $insertedName);
             $stmt->execute();
 
-            $folderPath = "../../assets/img/faces/" . $insertedName;
+            $folderPath = "../../assets/image/faces/" . $insertedName;
             deleteDirectory($folderPath);
         }
 

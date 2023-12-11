@@ -50,6 +50,7 @@
                             <option>Loading...</option>
                         </select>
                         <video id="video" style="display: none;"></video>
+                        <button class="btn btn-primary col-12 mt-3" id="detect_spoofing" onclick="detect_spoofing()" disabled>Detect Spoofing</button>
                     </div>
                     <div class="card-footer bg-white">
                         <p>Output:</p>
@@ -85,6 +86,24 @@
                                 <div class="progress-bar bg-primary" style="width: 0%">0%</div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="resultModal" tabindex="-1" role="dialog" aria-labelledby="resultModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="resultModalLabel">Modal Title</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <img src="" class="img-fluid rounded-2 object-fit-contain w-100" id="modalImage" alt="Result Image">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Ok</button>
                     </div>
                 </div>
             </div>
@@ -151,10 +170,10 @@
             file.style.display = 'none';
 
             Promise.all([
-                faceapi.nets.tinyFaceDetector.loadFromUri('/teachable_machine/models/face-api'),
-                faceapi.nets.faceRecognitionNet.loadFromUri('/teachable_machine/models/face-api'),
-                faceapi.nets.faceLandmark68Net.loadFromUri('/teachable_machine/models/face-api'),
-                faceapi.nets.ssdMobilenetv1.loadFromUri('/teachable_machine/models/face-api')
+                faceapi.nets.tinyFaceDetector.loadFromUri('/face_recognition/models/face-api'),
+                faceapi.nets.faceRecognitionNet.loadFromUri('/face_recognition/models/face-api'),
+                faceapi.nets.faceLandmark68Net.loadFromUri('/face_recognition/models/face-api'),
+                faceapi.nets.ssdMobilenetv1.loadFromUri('/face_recognition/models/face-api')
             ]).then(start_video);
 
             function start_video() {
@@ -183,6 +202,8 @@
                         video.parentElement.appendChild(canvas);
                         canvas.className = 'rounded-2 mt-3 w-100';
                         canvas.id = 'canvas_webcam';
+
+                        document.getElementById('detect_spoofing').removeAttribute('disabled');
 
                         const displaySize = {
                             width: video.videoWidth,
@@ -233,15 +254,16 @@
                                 } else {
                                     results.forEach((result, i) => {
                                         const box = resizedDetections[i].detection.box;
-                                        const detectedName = result.label.replace('_', ' ');
+                                        const detectedName = result.label.replace(/_/g, ' ');
                                         const accuracyPercentage = Math.round((1 - result.distance) * 100);
                                         const landmarks = result.landmarks;
                                         const drawBox = new faceapi.draw.DrawBox(box, {
                                             label: detectedName
                                         });
 
-                                        faceapi.draw.drawFaceLandmarks(canvas, landmarks);
                                         drawBox.draw(canvas);
+
+                                        faceapi.draw.drawFaceLandmarks(canvas, landmarks);
 
                                         output_detected(accuracyPercentage, detectedName);
                                     });
@@ -304,6 +326,59 @@
             });
         }
 
+        function detect_spoofing() {
+            blockUIMyCustom();
+
+            const canvasElement = document.getElementById('canvas_webcam');
+            const imageData = canvasElement.toDataURL();
+
+            // Step 1: Extract base64 image data
+            const base64Data = imageData.split(',')[1];
+
+            // Step 2: Convert base64 data to binary string
+            const binaryString = atob(base64Data);
+
+            // Step 3: Create ArrayBuffer from binary string
+            const buffer = new ArrayBuffer(binaryString.length);
+            const uint8Array = new Uint8Array(buffer);
+            for (let i = 0; i < binaryString.length; i++) {
+                uint8Array[i] = binaryString.charCodeAt(i);
+            }
+
+            // Step 4: Create Blob from ArrayBuffer
+            const blob = new Blob([buffer], {
+                type: 'image/jpeg'
+            });
+
+            // Step 5: Create FormData and append the Blob
+            const formData = new FormData();
+            formData.append('image_data', blob, 'image.jpg');
+
+            // Step 6: Send the FormData using AJAX
+            $.ajax({
+                url: "http://127.0.0.1:5000/spoofing_process",
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function(response) {
+                    const isSpoof = response;
+                    const modalTitle = isSpoof === 1 ? 'Real!' : 'Fake!';
+                    const modalImage = document.getElementById('modalImage');
+                    modalImage.src = canvasElement.toDataURL();
+                    const modal = new bootstrap.Modal(document.getElementById('resultModal'));
+                    const modalLabel = document.getElementById('resultModalLabel');
+                    modalLabel.innerText = modalTitle;
+                    modal.show();
+                    $.unblockUI();
+                },
+                error: function(error) {
+                    console.log(error);
+                    $.unblockUI();
+                }
+            });
+        }
+
         function change_webcam() {
             const selectedWebcam = document.getElementById('select_webcam').value;
             show_webcam(selectedWebcam);
@@ -342,13 +417,13 @@
         }
 
         function upload_image() {
-            blockUIMyCustom();
-
             const input = document.getElementById('upload_input');
-            const imageContainer = document.getElementById('image_uploaded');
-            const outputDetectedElement = document.getElementById('file_output_detected');
 
             if (input.files && input.files[0]) {
+                blockUIMyCustom();
+
+                const imageContainer = document.getElementById('image_uploaded');
+                const outputDetectedElement = document.getElementById('file_output_detected');
                 const reader = new FileReader();
 
                 reader.onload = async function(e) {
@@ -382,20 +457,36 @@
                     outputDetectedElement.appendChild(accuracyBarElement);
 
                     await Promise.all([
-                        faceapi.nets.tinyFaceDetector.loadFromUri('/teachable_machine/models/face-api'),
-                        faceapi.nets.faceRecognitionNet.loadFromUri('/teachable_machine/models/face-api'),
-                        faceapi.nets.faceLandmark68Net.loadFromUri('/teachable_machine/models/face-api'),
-                        faceapi.nets.ssdMobilenetv1.loadFromUri('/teachable_machine/models/face-api')
+                        faceapi.nets.tinyFaceDetector.loadFromUri('/face_recognition/models/face-api'),
+                        faceapi.nets.faceRecognitionNet.loadFromUri('/face_recognition/models/face-api'),
+                        faceapi.nets.faceLandmark68Net.loadFromUri('/face_recognition/models/face-api'),
+                        faceapi.nets.ssdMobilenetv1.loadFromUri('/face_recognition/models/face-api')
                     ]);
 
                     const canvas = faceapi.createCanvasFromMedia(image);
 
                     canvas.className = 'rounded-2 mt-3 w-100';
+                    
+                    const displaySize = {
+                        width: image.width,
+                        height: image.height
+                    };
+
+                    faceapi.matchDimensions(canvas, displaySize);
 
                     try {
                         const labeledDescriptors = await loadLabeledImages();
                         const faceMatcher = new faceapi.FaceMatcher(labeledDescriptors, 0.45);
                         const detections = await faceapi.detectAllFaces(image, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptors();
+                        const resizedDetections = faceapi.resizeResults(detections, displaySize);
+
+                        canvas.getContext('2d').drawImage(
+                            image,
+                            0,
+                            0,
+                            displaySize.width,
+                            displaySize.height
+                        );
 
                         if (labeledDescriptors.length === 0) {
                             alert("Data training kosong.");
@@ -409,7 +500,7 @@
                             return;
                         }
 
-                        const results = detections.map((detection) => {
+                        const results = resizedDetections.map(detection => {
                             const bestMatch = faceMatcher.findBestMatch(detection.descriptor);
                             return {
                                 label: bestMatch.toString(),
@@ -418,14 +509,9 @@
                         });
 
                         results.forEach((result, i) => {
-                            const box = detections[i].detection.box;
-                            let detectedName = result.label.replace('_', ' ');
+                            const box = resizedDetections[i].detection.box;
+                            let detectedName = result.label.replace(/_/g, ' ');
                             let accuracyPercentage = Math.round((1 - result.distance) * 100);
-
-                            if (detectedName.toLowerCase().includes('unknown')) {
-                                detectedName = 'Unknown';
-                                accuracyPercentage = 0;
-                            }
 
                             const drawBox = new faceapi.draw.DrawBox(box, {
                                 label: detectedName
@@ -438,9 +524,16 @@
 
                             for (let i = 1; i <= results.length; i++) {
                                 const notDetectedElement = document.createElement('p');
+                                let detectedNameUnique = results[i - 1].label.replace(/_/g, ' ');
+
+                                if (detectedNameUnique.toLowerCase().includes('unknown')) {
+                                    detectedNameUnique = 'Unknown';
+                                    accuracyPercentage = 0;
+                                }
+
                                 notDetectedElement.style.marginBottom = '10px';
                                 notDetectedElement.style.fontWeight = '600';
-                                notDetectedElement.textContent = detectedName || 'Unknown';
+                                notDetectedElement.textContent = detectedNameUnique;
 
                                 const accuracyBarElement = document.createElement('div');
                                 accuracyBarElement.className = 'progress mb-3';
