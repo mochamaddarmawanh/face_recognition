@@ -21,8 +21,8 @@ if ($uri_segments[2] !== "") {
       include "views/_bot.php";
   }
 } else {
-  $title = "About Face Recognition";
+  $title = "Select Project";
   include "views/_top.php";
-  include "views/about.php";
+  include "views/project.php";
   include "views/_bot.php";
 }
