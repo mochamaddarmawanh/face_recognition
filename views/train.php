@@ -138,13 +138,31 @@
 
                 if (confirm(confirmText)) {
                     blockUIMyCustom();
+
+                    const computeResult = await computeDescriptors(imageDataArray);
+
+                    console.log(computeResult)
+
+                    if (computeResult === null) {
+                        $.unblockUI();
+                        alert('Tidak ada wajah yang terdeteksi, mohon lakukan pengambilan wajah dengan posisi yang benar mata ke kamera dan silahkan coba kembali.');
+                        document.getElementById('train_fail').classList.remove('visually-hidden');
+                        document.getElementById('train_fail').innerHTML = `
+                            <strong>Tidak ada wajah yang terdeteksi!</strong> Mohon lakukan pengambilan wajah dengan posisi yang benar mata ke kamera dan silahkan coba kembali.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        `;
+                        document.getElementById('train_success').classList.add('visually-hidden');
+
+                        return;
+                    }
+
                     $.ajax({
                         url: 'models/train/training.php',
                         type: 'POST',
                         data: {
                             imageDataArray: JSON.stringify(imageDataArray),
                             className: JSON.stringify(className),
-                            descriptors: JSON.stringify(await computeDescriptors(imageDataArray))
+                            descriptors: JSON.stringify(computeResult)
                         },
                         success: function(response) {
                             $.unblockUI();
@@ -222,6 +240,10 @@
                         });
                     }
                 }
+            }
+
+            if (Object.keys(labeledFaceDescriptors).length === 0) {
+                return null;
             }
 
             return labeledFaceDescriptors;
